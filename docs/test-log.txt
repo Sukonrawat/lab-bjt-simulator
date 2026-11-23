@@ -67,5 +67,9 @@ browser -> คลิก divider/fixed/emitter ได้ field ตรงโหม
 screenshot -> docs/screenshots/lab04-lab03-modes.png                           PASS
 
 # หมายเหตุ public link
+restart tunnel ใหม่ (ไม่ใช้ --protocol http2, ใช้ default quic) ->
+https://heel-represent-reservation-avon.trycloudflare.com
+GET / /health /simulator -> 200; POST /simulate dc -> Success, VCE 7.900 V, IC 1.278 mA   PASS
+ลิงก์เก่า tries-college-ali-certainly -> 530 (หมดอายุตามค่า Quick Tunnel)
 ลิงก์เก่า https://constraints-humanity-misc-salary.trycloudflare.com ใช้ไม่ได้แล้ว
 (DNS ไม่ resolve หลัง restart) — Quick Tunnel ต้องสร้างใหม่ทุกครั้ง ดู README.md

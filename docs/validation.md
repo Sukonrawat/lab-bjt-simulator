@@ -181,9 +181,9 @@ Screenshot ที่ commit ไว้ (OpenCode Browser, หลังแก้ a
 - ไม่ได้ใช้ Impeccable skill จริง → ปรับ UI ด้วย self-review + วัด responsive แบบ iframe แทน
 - กราฟเป็น inline SVG ที่ plot จาก array ไม่มี interactive tooltip / zoom
 - Public link แบบ Quick Tunnel เปลี่ยน URL ทุกครั้งที่ restart (ไม่ได้ตั้งค่าบน host ถาวร)
-  ลิงก์ที่ใช้ตรวจ Lab 04: <https://tries-college-ali-certainly.trycloudflare.com>
-  (GET `/`, `/health`, `/simulator` → 200; POST `/simulate` dc → `VCE 7.900 V`)
-  ตรวจครั้งสุดท้ายหลังแก้ audit: POST transient → `Success`, `ngspice-47`, `Input frequency 1000 Hz`, 3 กราฟ)
+  ลิงก์ที่ใช้ตรวจ Lab 04 (ปัจจุบันหลัง restart): <https://heel-represent-reservation-avon.trycloudflare.com>
+  (GET `/`, `/health`, `/simulator` → 200; POST `/simulate` dc → `Success`, `VCE 7.900 V`, `IC 1.278 mA`)
+  ลิงก์เก่า <https://tries-college-ali-certainly.trycloudflare.com> หมดอายุแล้ว (HTTP 530) — Quick Tunnel เปลี่ยนทุกครั้ง)
 
 ---
 

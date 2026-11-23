@@ -20,7 +20,7 @@ Lab 03 ทั้ง 3 โหมดยังใช้ได้เหมือน�
 
 ## 🔗 Public Link & Source
 
-**👉 Live app: <https://tries-college-ali-certainly.trycloudflare.com>** (working: GET `/`, `/health`, `/simulator` และ POST `/simulate` → `VCE 7.900 V`)
+**👉 Live app: <https://heel-represent-reservation-avon.trycloudflare.com>** (ตรวจแล้ว: GET `/`, `/health`, `/simulator` → 200 และ POST `/simulate` → `Success`, `VCE 7.900 V`, `IC 1.278 mA`)
 
 **👉 Source code: <https://github.com/Sukonrawat/lab-bjt-simulator>** (public repo, branch `main`)
 

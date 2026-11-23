@@ -258,7 +258,7 @@ Screenshot ที่ commit ไว้ (OpenCode Browser, หลังแก้ a
 - 390 px: 3 กราฟอยู่ครบ, `scrollWidth == clientWidth == 390`, ไม่มี element ล้ำขอบ
 - Automated tests: **91 tests OK** (81 → 85 จาก "ทั้ง 2 กราฟทุกแท็บ" + error path; 85 → 89 จาก test รูปวงจร Lab 03 และ 3 tests การเชื่อม ngspice; 89 → 90 จาก test `Running…` + หน่วย `Time (s)`; 90 → 91 จาก test ลิงก์ 3 โหมด Lab 03 ในหน้า Lab 04)
 
-### 23. เชื่อม ngspice — ปิดจุดที่ audit พบ (รันจริง + test)
+### 23. ✅ ฉันเชื่อม ngspice แล้ว — ปิดจุดที่ audit พบ (รันจริง + test)
 | จุด | ก่อนแก้ | หลังแก้ (evidence) |
 |---|---|---|
 | Version badge | `******` (บรรทัดแรกของ `ngspice --version`) | `ngspice-47 : Circuit level simulation program` — `engine_version()` เลือกบรรทัดที่มี `ngspice-` |

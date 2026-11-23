@@ -10,6 +10,12 @@
 
 Lab 03 ทั้ง 3 โหมดยังใช้ได้เหมือนเดิม (48 tests เดิมผ่านทุกตัว)
 
+> ### ✅ ฉันเชื่อม ngspice แล้ว
+> `spice_engine.py` เรียก **ngspice-47 จริง** ผ่านตัวแปร `NGSPICE_BIN` แบบ `subprocess` (`--version` / `-b -o run.log`)
+> เพื่อรัน `.op` / `.ac` / `.tran` ของวงจร Voltage Divider CE แล้วอ่านตาราง `.PRINT` มาแสดงเป็นตัวเลขและกราฟ
+> **ไม่มี mock data ไม่มีค่า cache และถ้า solver ล้มเหลวจะตอบ 503 โดยไม่โชว์ผลเก่า**
+> หลักฐาน: `docs/validation.md` ข้อ 23–24 · screenshot ใน `docs/screenshots/` · `ngspice-47 : Circuit level simulation program`
+
 ---
 
 ## 🔗 Public Link & Source

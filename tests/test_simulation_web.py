@@ -42,7 +42,12 @@ def _result(analysis: str) -> se.SimulationResult:
         )
     return se.SimulationResult(
         analysis="transient",
-        values={"VIN_PEAK": 0.01, "VOUT_PEAK": 0.08, "INVERSION_CORR": -0.999},
+        values={
+            "VIN_PEAK": 0.01,
+            "VOUT_PEAK": 0.08,
+            "FREQ_HZ": 1000.0,
+            "INVERSION_CORR": -0.999,
+        },
         series={
             "time": [0.0, 1e-4, 2e-4],
             "vin": [0.0, 0.01, 0.0],
@@ -152,6 +157,7 @@ class SimulateRouteTest(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         body = response.get_data(as_text=True)
         self.assertIn('id="plot-waveform"', body)
+        self.assertIn('id="tran-freq">1000 Hz', body)
         self.assertIn('id="tran-samples">3', body)
         self.assertIn('id="tran-correlation">-0.9990', body)
         self.assertIn('id="inversion-note"', body)
@@ -166,6 +172,32 @@ class SimulateRouteTest(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         for plot_id in ("plot-gain", "plot-phase", "plot-waveform"):
             self.assertIn(f'id="{plot_id}"', body)
+
+    def test_each_plot_has_its_own_visible_netlist_and_log(self):
+        with mock.patch.object(
+            web_app.spice_engine, "run_simulation", side_effect=_by_analysis
+        ):
+            response = self.client.post("/simulate", data=DEFAULT_FORM)
+        body = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        for label in ("DC (.op)", "AC (.ac)", "Transient (.tran)"):
+            self.assertIn(f"{label} — ngspice netlist", body)
+        self.assertIn("fake .op log", body)
+        self.assertIn("fake .ac log", body)
+        self.assertIn("fake .tran log", body)
+
+    def test_transient_tab_labels_netlist_by_analysis_not_context_slot(self):
+        with mock.patch.object(
+            web_app.spice_engine, "run_simulation", side_effect=_by_analysis
+        ):
+            response = self.client.post(
+                "/simulate", data=dict(DEFAULT_FORM, analysis="transient")
+            )
+        body = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Transient (.tran) — ngspice netlist", body)
+        self.assertIn("AC (.ac) — ngspice netlist", body)
+        self.assertNotIn("DC (.op) — ngspice netlist", body)
 
     def test_ac_run_renders_bode_and_waveform(self):
         with mock.patch.object(

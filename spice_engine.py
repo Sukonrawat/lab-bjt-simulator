@@ -118,7 +118,14 @@ def engine_version(binary: str | None = None) -> str:
             check=False,
         )
         text = (completed.stdout + completed.stderr).strip()
-        return text.splitlines()[0] if text else ""
+        lines = text.splitlines()
+        # ngspice prints a decorative '******' line first; the usable version
+        # is the banner line containing 'ngspice-47' (or another version tag).
+        for line in lines:
+            normalized = line.strip().lstrip("*").strip()
+            if "ngspice-" in normalized.lower():
+                return normalized
+        return lines[0] if lines else ""
     except (SimulationError, OSError, subprocess.SubprocessError):
         return ""
 
@@ -377,6 +384,9 @@ def run_simulation(params: dict[str, float], analysis: str) -> SimulationResult:
             values = {
                 "VIN_PEAK": max(abs(v - mean_in) for v in vin),
                 "VOUT_PEAK": max(abs(v - mean_out) for v in vout),
+                # The source setting that produced this waveform (from the
+                # same validated params used in the netlist).
+                "FREQ_HZ": params["FREQ"],
                 # Evidence for the CE inversion claim, computed from the run.
                 "INVERSION_CORR": _correlation(vin, vout),
             }

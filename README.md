@@ -122,9 +122,9 @@ Q1 c b e QNPN
 
 ```bash
 python -m unittest discover -s tests -v
-# → Ran 86 tests OK (49 Lab 03 + 37 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
+# → Ran 89 tests OK (49 Lab 03 + 40 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
 NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-# → Ran 86 tests OK (ไม่มี skip)
+# → Ran 89 tests OK (ไม่มี skip)
 ```
 
 ---

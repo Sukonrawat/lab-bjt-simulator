@@ -107,6 +107,24 @@ def _simulator_context(
             beta=100.0,
             VBE=0.70,
         )
+    # Every plot on screen must be traceable to the exact ngspice run that
+    # produced it, including the AC/Transient runs added for the target screen.
+    provenance_labels = {
+        "dc": "DC (.op)",
+        "ac": "AC (.ac)",
+        "transient": "Transient (.tran)",
+    }
+    runs_by_analysis = {
+        run.analysis: run
+        for run in (result, ac_result, tran_result)
+        if run is not None
+    }
+    provenance: list[tuple[str, spice_engine.SimulationResult]] = [
+        (provenance_labels[analysis], runs_by_analysis[analysis])
+        for analysis in spice_engine.ANALYSES
+        if analysis in runs_by_analysis
+    ]
+
     return {
         "analysis": analysis,
         "analyses": spice_engine.ANALYSES,
@@ -119,6 +137,7 @@ def _simulator_context(
         "ac_result": ac_result,
         "tran_result": tran_result,
         "plots": plots or {},
+        "provenance": provenance,
         "error": error,
         "reference": reference,
         "reference_display": dc_bias.display_results(reference) if reference else None,

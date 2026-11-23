@@ -55,8 +55,8 @@ Public link ที่ใช้ตรวจ: <https://constraints-humanity-misc-s
 > เครื่องมือที่ใช้จริง: **OpenCode Browser** (Playwright MCP ไม่พร้อมใช้เพราะไม่มี node/npx)
 
 ## 11. Automated tests (Lab 03 baseline)
-`python -m unittest discover -s tests -v` → **Ran 81 tests … OK**
-(48 Lab 03 [25 engineering + 23 HTTP] + 33 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
+`python -m unittest discover -s tests -v` → **Ran 89 tests … OK**
+(49 Lab 03 [25 engineering + 24 HTTP] + 40 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
 
 ---
 
@@ -193,7 +193,7 @@ Screenshot (server-local paths):
 | AC | Success · 4.86 dB @ 490 Hz · −179.7° · polyline 267 จุด/กราฟ · caption `Gain (dB)` / `Phase (deg)` |
 | Transient | Success · 2 waveform · Vin 0.0100 V / Vout 0.017 V / 1608 samples / corr −1.0000 · legend `Vin (teal) / Vout (orange)` |
 | Console error | ไม่มี |
-| Automated tests | `NGSPICE_BIN=... python -m unittest discover -s tests` → **81 tests OK** (A1–A5, B1–B8 ไม่ถอยหลัง) |
+| Automated tests | `NGSPICE_BIN=... python -m unittest discover -s tests` → **89 tests OK** (A1–A5, B1–B8 ไม่ถอยหลัง) |
 
 **ข้อจำกัดที่ยังตรงตามใบงาน:** ไม่เพิ่ม Emitter bypass, animation หรือ circuit editor — ภาพเป้าหมายเป็น wireframe สำหรับตำแหน่งฟังก์ชัน (ใบงานระบุ *“ไม่กำหนดให้ทุกทีมทำ Layout เหมือนกัน”* และ *“แนะนำให้การอ่านวงจรและกราฟสำคัญกว่าการเพิ่ม Effects”*)
 
@@ -215,7 +215,7 @@ Screenshot (server-local paths):
 - Browser จริง viewport 1000 px: 3 โหมด SVG มองเห็น (`w=392,h=304`) · label ครบ · resistor ถูกต้องตามโหมด
 - 390 px iframe: `scrollWidth == clientWidth == 390` ไม่มี element ล้ำขอบ · SVG `272×211`
 - Public tunnel: `GET /?mode=...` ทุกโหมดมี `bias-schematic` + `Q1 NPN` + ป้าย resistor ถูกต้อง
-- Automated: **86 tests OK** (เพิ่ม `test_index_shows_visible_circuit_svg_for_every_mode` — HTTP test ตรวจทุกโหมด)
+- Automated: **89 tests OK** (เพิ่ม `test_index_shows_visible_circuit_svg_for_every_mode` — HTTP test ตรวจทุกโหมด)
 
 ---
 
@@ -239,4 +239,13 @@ Screenshot (server-local paths):
 
 - ทุกเคส `run-status = Success` และ `Engine: ngspice` ปรากฏ
 - 390 px: 3 กราฟอยู่ครบ, `scrollWidth == clientWidth == 390`, ไม่มี element ล้ำขอบ
-- Automated tests: **85 tests OK** (เพิ่มจาก 81 → 85: 4 tests ใหม่สำหรับ "ทั้ง 2 กราฟทุกแท็บ" + error path ของการรันเสริม)
+- Automated tests: **89 tests OK** (81 → 85 จาก "ทั้ง 2 กราฟทุกแท็บ" + error path; 85 → 89 จาก test รูปวงจร Lab 03 และ 3 tests การเชื่อม ngspice: version badge, netlist/log ทุก analysis, ป้ายตาม analysis จริง)
+
+### 23. เชื่อม ngspice — ปิดจุดที่ audit พบ (รันจริง + test)
+| จุด | ก่อนแก้ | หลังแก้ (evidence) |
+|---|---|---|
+| Version badge | `******` (บรรทัดแรกของ `ngspice --version`) | `ngspice-47 : Circuit level simulation program` — `engine_version()` เลือกบรรทัดที่มี `ngspice-` |
+| Provenance ของกราฟ | แสดง netlist/log เฉพาะ analysis ที่เลือก | แสดง `<details>` ของทุก analysis ที่รันจริง (DC/AC/Transient ตามแท็บ) ป้ายมาจาก `run.analysis` ไม่ใช่ตำแหน่ง context |
+| Transient frequency | มีเฉพาะในฟอร์ม/netlist | ตารางผลแสดง `Input frequency 1000 Hz` (`FREQ_HZ` จาก params เดียวกับ netlist) |
+
+ตรวจด้วย test client รันจริง 3 แท็บ: `version=ngspice-47 ...`, provenance ตรง analysis, `tran-freq=1000 Hz`, 3 กราฟครบ, HTTP 200

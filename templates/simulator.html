@@ -157,11 +157,13 @@
             {% endif %}
           </div>
 
-          <details class="reference-box">
-            <summary>ngspice netlist &amp; log (หลักฐานที่มา)</summary>
-            <h4>Netlist</h4><pre class="log-box">{{ result.netlist }}</pre>
-            <h4>Log tail</h4><pre class="log-box">{{ result.log_excerpt }}</pre>
-          </details>
+          {% for label, provenance_run in provenance %}
+            <details class="reference-box">
+              <summary>{{ label }} — ngspice netlist &amp; log (หลักฐานที่มา)</summary>
+              <h4>Netlist</h4><pre class="log-box">{{ provenance_run.netlist }}</pre>
+              <h4>Log tail</h4><pre class="log-box">{{ provenance_run.log_excerpt }}</pre>
+            </details>
+          {% endfor %}
         {% else %}
           <div class="plot-frame empty">
             <p class="plot-caption">Bode response</p>
@@ -235,6 +237,7 @@
               <tbody>
                 <tr><th scope="row">Vin peak</th><td id="tran-vin">{{ '%.4f'|format(result.values.VIN_PEAK) }} V</td></tr>
                 <tr><th scope="row">Vout peak</th><td id="tran-vout">{{ '%.3f'|format(result.values.VOUT_PEAK) }} V</td></tr>
+                <tr><th scope="row">Input frequency</th><td id="tran-freq">{{ '%.6g'|format(result.values.FREQ_HZ) }} Hz</td></tr>
                 <tr><th scope="row">Samples</th><td id="tran-samples">{{ result.series.time|length }}</td></tr>
                 {% if result.values.INVERSION_CORR is defined %}
                   <tr><th scope="row">Vin↔Vout correlation</th><td id="tran-correlation">{{ '%.4f'|format(result.values.INVERSION_CORR) }}</td></tr>
@@ -245,6 +248,7 @@
             <p class="result-inline">
               {{ '%.4f'|format(tran_result.values.VIN_PEAK) }} V ·
               {{ '%.3f'|format(tran_result.values.VOUT_PEAK) }} V ·
+              {{ '%.6g'|format(tran_result.values.FREQ_HZ) }} Hz ·
               {{ '%.4f'|format(tran_result.values.INVERSION_CORR) }}
             </p>
           {% else %}

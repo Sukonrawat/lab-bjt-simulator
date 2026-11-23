@@ -4,12 +4,12 @@ Ran 48 tests in 0.018s
 OK
 
 $ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-... (49 Lab 03 + 37 Lab 04, ไม่มี skip)
-Ran 86 tests in 0.110s
+... (49 Lab 03 + 40 Lab 04, ไม่มี skip)
+Ran 89 tests in 0.116s
 OK
 
 $ python -m unittest discover -s tests             # ไม่ตั้ง NGSPICE_BIN
-Ran 81 tests in 0.024s
+Ran 88 tests in 0.024s
 OK (skipped=1)   # real-engine test ถูกข้ามตามความเหมาะสม
 
 # ตรวจ ngspice จริงด้วย adapter
@@ -40,6 +40,12 @@ GET /?mode=fixed   -> bias-schematic + RB/RC (ไม่มี R2/RE)            
 GET /?mode=emitter -> bias-schematic + RB/RC/RE (ไม่มี R2)                  PASS
 browser 1000px -> SVG 392x304 ทุกโหมด, 390px -> 272x211 ไม่มี overflow     PASS
 public tunnel ทุกโหมดมี bias-schematic + Q1 NPN                            PASS
+
+# เชื่อม ngspice — audit fixes (รันจริง 3 แท็บ)
+version badge -> ngspice-47 : Circuit level simulation program (ไม่ใช่ ******)  PASS
+DC tab -> netlist/log DC+AC+Tran แสดงครบ, ป้ายตรง run.analysis                 PASS
+AC tab -> netlist/log AC+Tran, ไม่มีป้าย DC ปลอม                              PASS
+Tran tab -> netlist/log Tran+AC + Input frequency 1000 Hz                     PASS
 
 # หมายเหตุ public link
 ลิงก์เก่า https://constraints-humanity-misc-salary.trycloudflare.com ใช้ไม่ได้แล้ว

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 import unittest
 from unittest import mock
 
@@ -156,6 +157,19 @@ class EngineLookupTest(unittest.TestCase):
         ):
             self.assertEqual(se.engine_version(), "")
 
+    def test_engine_version_uses_banner_line_not_decorative_header(self):
+        banner = (
+            "******\n"
+            "** ngspice-47 : Circuit level simulation program\n"
+            "** Compiled with KLU Direct Linear Solver\n"
+            "******\n"
+        )
+        completed = subprocess.CompletedProcess(["/fake/ngspice"], 0, banner, "")
+        with mock.patch("spice_engine.subprocess.run", return_value=completed):
+            version = se.engine_version("/fake/ngspice")
+        self.assertEqual(version, "ngspice-47 : Circuit level simulation program")
+        self.assertNotIn("******", version)
+
 
 class PlotTest(unittest.TestCase):
     def test_ac_plots_come_from_series(self):
@@ -188,6 +202,10 @@ class RealEngineTest(unittest.TestCase):
             result = se.run_simulation(params, analysis)
             self.assertEqual(result.engine, "ngspice")
             self.assertTrue(result.values or result.series)
+            self.assertIn("ngspice-", result.engine_version)
+            self.assertNotIn("******", result.engine_version)
+            if analysis == "transient":
+                self.assertEqual(result.values["FREQ_HZ"], params["FREQ"])
 
 
 if __name__ == "__main__":

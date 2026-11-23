@@ -165,3 +165,5 @@ Screenshot (server-local paths):
 - ไม่ได้ใช้ Impeccable skill จริง → ปรับ UI ด้วย self-review + วัด responsive แบบ iframe แทน
 - กราฟเป็น inline SVG ที่ plot จาก array ไม่มี interactive tooltip / zoom
 - Public link แบบ Quick Tunnel เปลี่ยน URL ทุกครั้งที่ restart (ไม่ได้ตั้งค่าบน host ถาวร)
+  ลิงก์ที่ใช้ตรวจ Lab 04: <https://tries-college-ali-certainly.trycloudflare.com>
+  (GET `/`, `/health`, `/simulator` → 200; POST `/simulate` dc → `VCE 7.900 V`)

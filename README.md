@@ -14,6 +14,8 @@ Lab 03 ทั้ง 3 โหมดยังใช้ได้เหมือน�
 
 ## 🔗 Public Link
 
+**👉 <https://tries-college-ali-certainly.trycloudflare.com>** (working: GET `/`, `/health`, `/simulator` และ POST `/simulate` → `VCE 7.900 V`)
+
 > ลิงก์ Quick Tunnel **เปลี่ยนทุกครั้งที่ restart** — ต้องรัน Flask + cloudflared ค้างไว้
 
 ```bash

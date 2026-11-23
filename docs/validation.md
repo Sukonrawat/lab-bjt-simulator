@@ -167,3 +167,32 @@ Screenshot (server-local paths):
 - Public link แบบ Quick Tunnel เปลี่ยน URL ทุกครั้งที่ restart (ไม่ได้ตั้งค่าบน host ถาวร)
   ลิงก์ที่ใช้ตรวจ Lab 04: <https://tries-college-ali-certainly.trycloudflare.com>
   (GET `/`, `/health`, `/simulator` → 200; POST `/simulate` dc → `VCE 7.900 V`)
+
+---
+
+## 20. ปรับหน้าจอให้ตรง SCREEN TARGET (ภาพที่ 1 ในใบงาน Lab 04)
+
+ผู้ใช้ส่ง screenshot ของภาพหน้าจอเป้าหมาย (SVG `#mockup` ใน
+`Lab04_BJT_Amplifier_Simulator_2-2569.html`) แล้วขอให้ปรับ UI ให้ตรง — สิ่งที่เปลี่ยน:
+
+| องค์ประกอบในภาพเป้าหมาย | สิ่งที่ implement จริง |
+|---|---|
+| แถบหัวสี `#103658` + ชื่อ “CE Amplifier Lab” + “DC Bias / AC / Transient” | `.sim-header` ใน `templates/simulator.html` |
+| การ์ดซ้าย “Circuit & Parameters” + วงจร CE voltage-divider (Q1 NPN, R1/R2/RC/RE, Cin/Cout, RL, ground ร่วม) | นำ SVG วงจรจากภาพเป้าหมายมาใช้จริง (13 paths, ไม่มีค่าตัวเลขฝัง) ด้านล่างเป็นฟอร์มแก้พารามิเตอร์ + แท็บ DC/AC/Transient + ปุ่ม “Run Simulation” |
+| การ์ดกลาง “Simulation & Plots” + กรอบ Bode / waveform | `.plot-frame` แสดง **กราฟจาก array ของ ngspice จริงเท่านั้น** (ไม่ใช้คำว่า illustrative และไม่มีค่าตัวอย่าง) |
+| การ์ดขวา “Engineering Results” + 3 ส่วน (DC / AC / Transient) + กล่อง “Engine: ngspice / Run status + model + units” | `.result-card` แสดงผล analysis ที่รันล่าสุด; ส่วนที่ยังไม่รันแสดง `not run` (ไม่ค้างค่เก่า) |
+| Theme สว่าง `#f6fafc`, การ์ดขาว, accent teal/orange | CSS ใหม่ scoped ด้วย `.sim-body` / `.sim-*` — **Lab 03 ยังใช้ theme เดิมไม่เปลี่ยน** |
+
+### ผลตรวจหลังปรับ (OpenCode Browser จริง)
+
+| รายการ | ผล |
+|---|---|
+| Layout ที่ viewport 1000 px | grid 3 คอลัมน์ **297 / 399 / 232 px** (สัดส่วนใกล้ 334 / 452 / 262 ในภาพเป้าหมาย), `scrollWidth == clientWidth == 1000` |
+| Layout ที่ 390 px (iframe) | 1 คอลัมน์, `scrollWidth == clientWidth == 390`, ไม่มี element ล้ำขอบ, ฟอร์มและปุ่มครบ |
+| DC | Success · VB 1.949 / VE 1.289 / VC 9.189 / VCE 7.900 V · IC 1.278 mA · analytical reference แยกต่างหาก |
+| AC | Success · 4.86 dB @ 490 Hz · −179.7° · polyline 267 จุด/กราฟ · caption `Gain (dB)` / `Phase (deg)` |
+| Transient | Success · 2 waveform · Vin 0.0100 V / Vout 0.017 V / 1608 samples / corr −1.0000 · legend `Vin (teal) / Vout (orange)` |
+| Console error | ไม่มี |
+| Automated tests | `NGSPICE_BIN=... python -m unittest discover -s tests` → **81 tests OK** (A1–A5, B1–B8 ไม่ถอยหลัง) |
+
+**ข้อจำกัดที่ยังตรงตามใบงาน:** ไม่เพิ่ม Emitter bypass, animation หรือ circuit editor — ภาพเป้าหมายเป็น wireframe สำหรับตำแหน่งฟังก์ชัน (ใบงานระบุ *“ไม่กำหนดให้ทุกทีมทำ Layout เหมือนกัน”* และ *“แนะนำให้การอ่านวงจรและกราฟสำคัญกว่าการเพิ่ม Effects”*)

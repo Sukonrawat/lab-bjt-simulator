@@ -245,3 +245,208 @@ tbody td { font-variant-numeric: tabular-nums; font-weight: 700; }
   .sim-layout { grid-template-columns: 1fr; }
   .field-grid { grid-template-columns: 1fr; }
 }
+
+/* ---------- Lab 04 · target screen: light three-column wireframe ----------
+   Scoped to .sim-body / .sim-* so the Lab 03 calculator keeps its own theme. */
+.sim-body {
+  background: #f6fafc;
+  color: #19394e;
+}
+.sim-page { max-width: 1180px; padding: 1.1rem 1.25rem 2rem; }
+
+.sim-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  background: #103658;
+  color: #fff;
+  border-radius: 6px;
+  padding: .7rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.sim-kicker {
+  margin: 0;
+  color: #cce9e3;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+.sim-header h1 { margin: .1rem 0 0; font-size: 1.3rem; }
+.sim-header-side { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem; }
+.sim-header-side > strong { color: #cce9e3; font-size: .9rem; font-weight: 500; }
+.sim-nav { display: flex; flex-wrap: wrap; gap: .4rem; }
+.sim-nav a {
+  color: #e2f4f1;
+  text-decoration: none;
+  font-size: .75rem;
+  padding: .2rem .5rem;
+  border: 1px solid rgba(204, 233, 227, .45);
+  border-radius: 4px;
+}
+.sim-nav a:hover { background: rgba(204, 233, 227, .16); }
+
+.sim-layout {
+  grid-template-columns: minmax(0, 1.28fr) minmax(0, 1.72fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+.sim-card {
+  background: #fff;
+  color: #19394e;
+  border: 1px solid #ccdce5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0;
+  box-shadow: 0 4px 14px rgba(16, 54, 88, .07);
+}
+.sim-card h2 {
+  margin: 0 0 .8rem;
+  color: #103658;
+  font-size: 1.05rem;
+}
+.sim-card h3 { color: #103658; font-size: .95rem; margin: 0 0 .35rem; }
+.sim-card h3 small { color: #547084; font-weight: 400; font-size: .75rem; }
+
+.ce-schematic { display: block; width: 100%; max-width: 20rem; max-height: 12rem; height: auto; }
+.schematic-box {
+  background: #fff;
+  border: 1px solid #dce7ee;
+  border-radius: 5px;
+  padding: .4rem;
+  margin-bottom: .8rem;
+}
+.sim-form .analysis-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  margin: 0 0 .7rem;
+}
+.sim-form .analysis-group legend {
+  width: 100%;
+  padding: 0 0 .25rem;
+  color: #547084;
+  font-size: .72rem;
+}
+.sim-form .radio-chip { margin: 0 !important; position: relative; }
+.sim-form .radio-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.sim-form .radio-chip span {
+  display: inline-block;
+  padding: .3rem .6rem;
+  border: 1px solid #dce7ee;
+  border-radius: 4px;
+  background: #e6eff7;
+  color: #164668;
+  font-size: .75rem;
+}
+.sim-form .radio-chip input:checked + span {
+  background: #e7f3ef;
+  border-color: #a7cfc2;
+  color: #13645c;
+  font-weight: 700;
+}
+.sim-form .radio-chip input:focus-visible + span { outline: 2px solid #07766e; outline-offset: 1px; }
+.sim-form .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem .55rem; }
+.sim-form .field { display: flex; align-items: center; gap: .35rem; min-width: 0; }
+.sim-form .field label { flex: 1 1 52%; margin: 0; color: #547084; font-size: .68rem; line-height: 1.25; }
+.sim-form .field input {
+  flex: 1 1 48%;
+  min-width: 0;
+  padding: .25rem .35rem;
+  border: 1px solid #ccdce5;
+  border-radius: 4px;
+  background: #fff;
+  color: #19394e;
+  font-size: .72rem;
+  line-height: 1.2;
+}
+.sim-run {
+  width: 100%;
+  margin-top: .7rem;
+  padding: .45rem;
+  border: 1px solid #a7cfc2;
+  border-radius: 5px;
+  background: #e7f3ef;
+  color: #13645c;
+}
+.sim-run:hover { background: #d7ece5; }
+.model-line { margin: .7rem 0 0; color: #547084; font-size: .68rem; word-break: break-word; }
+.model-line code { color: #13645c; }
+
+.plot-card .status-row h2 { margin-bottom: .6rem; }
+.plot-card .badge { margin-bottom: 0; font-size: .72rem; }
+.badge-forward-active { background: #e7f3ef; border-color: #a7cfc2; color: #13645c; }
+.badge-cutoff { background: #edf4f9; border-color: #ccdce5; color: #547084; }
+.badge-saturation { background: #fff1f1; border-color: #f1b4b4; color: #a33b3b; }
+.plot-card .measure-note { color: #547084; font-size: .75rem; margin: .4rem 0 .7rem; }
+.plot-frame {
+  border: 1px solid #dce7ee;
+  border-radius: 5px;
+  background: #f9fcfd;
+  padding: .5rem;
+  margin: .6rem 0;
+  min-width: 0;
+}
+.plot-frame.empty { min-height: 7.5rem; }
+.plot-caption { margin: 0 0 .3rem; color: #526c7f; font-size: .72rem; }
+.plot-frame .plot { margin: 0; border: 0; background: transparent; }
+.plot-frame .plot svg { display: block; }
+.plot-card .legend-line { color: #547084; font-size: .72rem; padding-top: .3rem; }
+.plot-card .alert { margin: .6rem 0; font-size: .78rem; }
+.plot-card .alert-error { background: #fff1f1; border-color: #a33b3b; color: #8a2f2f; }
+.plot-card .alert-warning { background: #fff8e6; border-color: #c4931f; color: #7a5c11; }
+.plot-card .placeholder { color: #547084; font-size: .75rem; }
+
+.result-block { padding: .55rem 0; border-bottom: 1px solid #dce7ee; }
+.result-block h3 { color: #547084; font-size: .78rem; font-weight: 500; margin: 0 0 .25rem; }
+.result-block.is-active h3 { color: #103658; font-weight: 700; }
+.result-block .result-empty { margin: 0; color: #7c93a3; font-size: .76rem; }
+.result-block .result-empty span { color: #9cb2c2; font-style: italic; }
+.result-block table, .result-block .reference-box table { width: 100%; }
+.result-block th, .result-block td {
+  padding: .25rem .2rem;
+  border: 0;
+  font-size: .74rem;
+  text-align: left;
+}
+.result-block tbody th { color: #547084; font-weight: 500; }
+.result-block tbody td { color: #103658; font-weight: 700; font-variant-numeric: tabular-nums; }
+.result-card .reference-box {
+  margin-top: .4rem;
+  background: #f6fafc;
+  border: 1px solid #dce7ee;
+  border-radius: 4px;
+  color: #19394e;
+}
+.result-card .reference-box summary { color: #13645c; font-size: .72rem; cursor: pointer; }
+.result-card .reference-box p { color: #547084; font-size: .68rem; }
+.result-card .reference-box h4 { color: #547084; font-size: .7rem; }
+.result-card .log-box { background: #103658; color: #d7ece5; max-height: 190px; }
+.engine-box {
+  margin-top: .9rem;
+  padding: .6rem .7rem;
+  border: 1px solid #a7cfc2;
+  border-radius: 5px;
+  background: #e7f3ef;
+  color: #13645c;
+}
+.engine-box .badge { margin-bottom: .25rem; font-size: .72rem; }
+.engine-version { display: block; font-size: .66rem; }
+.engine-box small { display: block; font-size: .66rem; color: #3e7d74; }
+.sim-footer { color: #547084; }
+
+@media (max-width: 980px) {
+  .sim-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
+  .result-card { grid-column: 1 / -1; }
+}
+@media (max-width: 780px) {
+  .sim-layout { grid-template-columns: 1fr; }
+  .result-card { grid-column: auto; }
+  .sim-form .field-grid { grid-template-columns: 1fr; }
+  .sim-header-side { width: 100%; }
+}

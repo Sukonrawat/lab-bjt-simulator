@@ -88,8 +88,8 @@ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice \
 |---|---|
 | `spice_engine.py` | validate → build netlist → `subprocess.run([...], timeout=30)` → parse `.PRINT` log → สร้าง SVG จาก array จริง; ไม่ import Flask |
 | `app.py` | `GET /simulator`, `POST /simulate` (dc/ac/transient), แยกป้าย **SPICE result** กับ **Analytical reference** |
-| `templates/simulator.html` | ฟอร์ม CE, radio DC/AC/Transient, badge `Engine: ngspice`, สถานะ Idle/Success/Error, Bode + waveform inline SVG พร้อมแกน/หน่วย/ตัวเลข |
-| `static/style.css` | responsive layout (desktop + 390 px), ไม่มีตัวเลขหรือหน่วยฝังอยู่ |
+| `templates/simulator.html` | หน้าจอตาม SCREEN TARGET ของใบงาน: แถบหัว “CE Amplifier Lab” + 3 การ์ด (Circuit & Parameters / Simulation & Plots / Engineering Results), ฟอร์ม CE, radio DC/AC/Transient, badge `Engine: ngspice`, สถานะ Idle/Success/Error, Bode + waveform inline SVG พร้อมแกน/หน่วย/ตัวเลข |
+| `static/style.css` | theme สว่างสำหรับ Lab 04 (แยก scope จาก Lab 03), responsive layout (desktop 3 column + 390 px), ไม่มีตัวเลขหรือหน่วยฝังอยู่ |
 | `tests/test_spice_engine.py` | validation, netlist, parser, engine lookup, plot, real-engine test (skip ถ้าไม่ตั้ง `NGSPICE_BIN`) |
 | `tests/test_simulation_web.py` | route test แบบ mock engine รวม error path (400/503, ไม่มี stale success) |
 | `docs/validation.md` | ตาราง B1–B8 + ผลรันจริง + ข้อจำกัดเครื่องมือ |

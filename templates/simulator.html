@@ -72,7 +72,8 @@
           </svg>
         </div>
 
-        <form method="post" action="/simulate" class="calc-form sim-form">
+        <form method="post" action="/simulate" class="calc-form sim-form"
+              onsubmit="var s=document.getElementById('run-status'); if(s){s.textContent='Running…'; s.className='badge badge-running';}">
           <fieldset class="analysis-group">
             <legend>Analysis Mode</legend>
             {% for key in analyses %}
@@ -140,7 +141,7 @@
 
           {# ---- Graph 2: Vin / Vout waveform (from the real .tran run) ---- #}
           <div class="plot-frame">
-            <p class="plot-caption">Input / Output waveforms · Time (ms)</p>
+            <p class="plot-caption">Input / Output waveforms · Time (s)</p>
             {% if tran_result and tran_result.analysis == 'transient' and plots.waveform %}
               <div class="plot" id="plot-waveform">{{ plots.waveform|safe }}</div>
               <div class="legend-line">
@@ -171,7 +172,7 @@
           </div>
           <div class="plot-frame empty">
             <p class="plot-caption">Input / Output waveforms</p>
-            <p class="placeholder">Vin (teal) / Vout (orange) · Time (ms) — รอผลรัน Transient</p>
+            <p class="placeholder">Vin (teal) / Vout (orange) · Time (s) — รอผลรัน Transient</p>
           </div>
         {% endif %}
       </section>

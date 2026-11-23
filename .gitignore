@@ -4,3 +4,8 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 *.log
+.env
+.env.*
+*.raw
+*.cir
+ngspice-47/

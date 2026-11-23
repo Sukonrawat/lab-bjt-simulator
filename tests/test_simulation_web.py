@@ -72,6 +72,12 @@ class SimulatorPageTest(unittest.TestCase):
         self.assertNotIn("Engine: ngspice", body)  # badge appears only after a run
         self.assertIn('value="100000"', body)
 
+    def test_form_shows_running_state_and_seconds_unit(self):
+        body = self.client.get("/simulator").get_data(as_text=True)
+        self.assertIn("Running…", body)  # set on submit before the synchronous POST
+        self.assertIn("Time (s)", body)
+        self.assertNotIn("Time (ms)", body)
+
     def test_get_simulator_selects_ac_from_query(self):
         body = self.client.get("/simulator?analysis=ac").get_data(as_text=True)
         self.assertIn('value="ac" checked', body)

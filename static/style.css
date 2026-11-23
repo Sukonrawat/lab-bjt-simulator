@@ -408,6 +408,7 @@ tbody td { font-variant-numeric: tabular-nums; font-weight: 700; }
 .badge-forward-active { background: #e7f3ef; border-color: #a7cfc2; color: #13645c; }
 .badge-cutoff { background: #edf4f9; border-color: #ccdce5; color: #547084; }
 .badge-saturation { background: #fff1f1; border-color: #f1b4b4; color: #a33b3b; }
+.badge-running { background: #fff6df; border-color: #e0b95f; color: #8a5b00; }
 .plot-card .measure-note { color: #547084; font-size: .75rem; margin: .4rem 0 .7rem; }
 .plot-frame {
   border: 1px solid #dce7ee;

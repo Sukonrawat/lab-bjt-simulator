@@ -4,12 +4,12 @@ Ran 48 tests in 0.018s
 OK
 
 $ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-... (49 Lab 03 + 40 Lab 04, ไม่มี skip)
-Ran 89 tests in 0.116s
+... (49 Lab 03 + 41 Lab 04, ไม่มี skip)
+Ran 90 tests in 0.109s
 OK
 
 $ python -m unittest discover -s tests             # ไม่ตั้ง NGSPICE_BIN
-Ran 88 tests in 0.024s
+Ran 90 tests in 0.026s
 OK (skipped=1)   # real-engine test ถูกข้ามตามความเหมาะสม
 
 # ตรวจ ngspice จริงด้วย adapter
@@ -46,6 +46,17 @@ version badge -> ngspice-47 : Circuit level simulation program (ไม่ใช�
 DC tab -> netlist/log DC+AC+Tran แสดงครบ, ป้ายตรง run.analysis                 PASS
 AC tab -> netlist/log AC+Tran, ไม่มีป้าย DC ปลอม                              PASS
 Tran tab -> netlist/log Tran+AC + Input frequency 1000 Hz                     PASS
+
+# เก็บ gap audit รอบสุดท้าย
+caption waveform -> Time (s) ตรงแกน SVG                                      PASS
+badge -> onsubmit Idle/Running… แล้ว server ตอบ Success/Error                 PASS
+screenshot OpenCode Browser -> docs/screenshots/lab04-dc-desktop.png         PASS
+                              docs/screenshots/lab04-transient-desktop.png   PASS
+before-state screenshot -> NOT SUBMITTED (ไม่มีของจริงเก็บไว้)                 ระบุไว้
+B1–B8 ตาราง Input/Expected-Reference/Evidence เพิ่มแล้ว                       PASS
+.gitignore + commit SHA ใน README + ลิงก์เก่า historical                     PASS
+unittest (NGSPICE_BIN) -> 90 tests OK, ไม่มี ResourceWarning                   PASS
+unittest (ไม่ตั้ง NGSPICE_BIN) -> 90 tests OK (skipped=1)                      PASS
 
 # หมายเหตุ public link
 ลิงก์เก่า https://constraints-humanity-misc-salary.trycloudflare.com ใช้ไม่ได้แล้ว

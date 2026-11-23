@@ -337,6 +337,7 @@ class MiscWebTest(unittest.TestCase):
         response = self.client.get("/static/style.css")
         self.assertEqual(response.status_code, 200)
         self.assertIn("text/css", response.content_type)
+        response.close()  # avoid ResourceWarning: unclosed file
 
     def test_no_results_table_on_first_get(self):
         body = self.client.get("/").get_data(as_text=True)

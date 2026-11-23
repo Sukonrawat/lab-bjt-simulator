@@ -18,7 +18,10 @@ Lab 03 ทั้ง 3 โหมดยังใช้ได้เหมือน�
 
 **👉 Source code: <https://github.com/Sukonrawat/lab-bjt-simulator>** (public repo, branch `main`)
 
+**Lab 04 commit (ระบุสำหรับการตรวจรับ):** `23d21c5` — รวม ngspice DC/AC/Transient เข้ากับ Lab 03 เดิม · `1658481` — hardening การเชื่อม ngspice (version/provenance/transient frequency)
+
 > ลิงก์ Quick Tunnel **เปลี่ยนทุกครั้งที่ restart** — ต้องรัน Flask + cloudflared ค้างไว้
+> path ของ `cloudflared` และ `NGSPICE_BIN` ด้านล่างเป็นของเครื่องนี้ — บนเครื่องอื่นให้เปลี่ยนตามตำแหน่งจริง
 
 ```bash
 # Terminal 1 — port 5001 (5000 ถูก AirPlay Receiver ใช้บน macOS เครื่องนี้)
@@ -122,9 +125,9 @@ Q1 c b e QNPN
 
 ```bash
 python -m unittest discover -s tests -v
-# → Ran 89 tests OK (49 Lab 03 + 40 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
+# → Ran 90 tests OK (49 Lab 03 + 41 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
 NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-# → Ran 89 tests OK (ไม่มี skip)
+# → Ran 90 tests OK (ไม่มี skip)
 ```
 
 ---

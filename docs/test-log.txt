@@ -1,14 +1,32 @@
-$ python -m unittest discover -s tests -v
-... (25 engineering tests + 23 HTTP tests)
-----------------------------------------------------------------------
+$ python -m unittest discover -s tests -v          # Lab 03 baseline (ก่อนเพิ่ม Lab 04)
+... (25 engineering + 23 HTTP tests)
 Ran 48 tests in 0.018s
-
 OK
 
-$ curl -sS -o /dev/null -w '%{http_code}' https://constraints-humanity-misc-salary.trycloudflare.com/
-200
-$ curl -sS -o /dev/null -w '%{http_code}' 'https://constraints-humanity-misc-salary.trycloudflare.com/?mode=fixed'
-200
-$ curl -sS -d 'mode=divider&VCC=12&R1=100000&R2=22000&RC=2200&RE=1000&beta=100&VBE=0.70' \
-    https://constraints-humanity-misc-salary.trycloudflare.com/calculate | grep 'id="ic-value"'
-<tr><th scope="row">IC</th><td id="ic-value">1.230 mA</td></tr>
+$ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
+... (48 Lab 03 + 33 Lab 04, ไม่มี skip)
+Ran 81 tests in 0.095s
+OK
+
+$ python -m unittest discover -s tests             # ไม่ตั้ง NGSPICE_BIN
+Ran 81 tests in 0.024s
+OK (skipped=1)   # real-engine test ถูกข้ามตามความเหมาะสม
+
+# ตรวจ ngspice จริงด้วย adapter
+dc      -> VB 1.949112 VE 1.289454 VC 9.189410 VCE 7.899956 IC 0.001278
+ac      -> 801 points, max gain 4.8598 dB @ 489.78 Hz, phase -179.7 deg
+tran    -> 1608 points, vin peak 0.0100 V, vout peak 0.0175 V, corr -0.9999972
+
+# Browser acceptance (OpenCode Browser) — ดูรายละเอียดใน docs/validation.md ข้อ 17
+B1 divider/fixed/emitter -> 1.230/1.130/1.026 mA, 8.052/9.514/8.705 V   PASS
+B2 DC .op -> Success + Engine: ngspice + 1.278 mA / 7.900 V              PASS
+B3 RE 1000->1500 -> IC 1.278->0.900 mA                                   PASS
+B4 AC -> 4.86 dB @ 490 Hz, -179.7 deg, 267-point Bode polylines          PASS
+B5 tran -> corr -1.0000 (inverted)                                        PASS
+B6 20 mV / 2 kHz -> Vout peak 0.017->0.035 V                              PASS
+B7 RE=0 -> 400 + Error; bad NGSPICE_BIN -> 503 + Error, ไม่มี stale data  PASS
+B8 390 px iframe -> scrollWidth == clientWidth == 390, 1 column          PASS
+
+# หมายเหตุ public link
+ลิงก์เก่า https://constraints-humanity-misc-salary.trycloudflare.com ใช้ไม่ได้แล้ว
+(DNS ไม่ resolve หลัง restart) — Quick Tunnel ต้องสร้างใหม่ทุกครั้ง ดู README.md

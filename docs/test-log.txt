@@ -4,8 +4,8 @@ Ran 48 tests in 0.018s
 OK
 
 $ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-... (48 Lab 03 + 37 Lab 04, ไม่มี skip)
-Ran 85 tests in 0.113s
+... (49 Lab 03 + 37 Lab 04, ไม่มี skip)
+Ran 86 tests in 0.110s
 OK
 
 $ python -m unittest discover -s tests             # ไม่ตั้ง NGSPICE_BIN
@@ -33,6 +33,13 @@ AC  -> calls [ac, transient]                    -> 3 plots + tran summary    PAS
 Tran-> calls [transient, ac]                    -> 3 plots + AC summary      PASS
 secondary run fails -> 503 Error, ไม่มี spice-results/plot-gain              PASS
 browser 3 tabs -> 267/267/268 points ทุกแท็บ, 390 px ไม่มี overflow         PASS
+
+# Lab 03 รูปวงจรหาย -> ใส่ SVG แสดงทันทีทุกโหมด
+GET /?mode=divider -> bias-schematic + R1/R2/RC/RE visible                 PASS
+GET /?mode=fixed   -> bias-schematic + RB/RC (ไม่มี R2/RE)                  PASS
+GET /?mode=emitter -> bias-schematic + RB/RC/RE (ไม่มี R2)                  PASS
+browser 1000px -> SVG 392x304 ทุกโหมด, 390px -> 272x211 ไม่มี overflow     PASS
+public tunnel ทุกโหมดมี bias-schematic + Q1 NPN                            PASS
 
 # หมายเหตุ public link
 ลิงก์เก่า https://constraints-humanity-misc-salary.trycloudflare.com ใช้ไม่ได้แล้ว

@@ -199,6 +199,26 @@ Screenshot (server-local paths):
 
 ---
 
+## 22. Lab 03 — นำรูปวงจรกลับมาให้เห็นทันที (ผู้ใช้แจ้ง "รูปวงจรหาย")
+
+ปัญหา: รูปวงจร Lab 03 เดิมเป็น **ASCII art ใน `<details>` ที่ยุบอยู่** → ผู้ใช้เปิดหน้าแล้วเห็นแต่หัวข้อ
+"แผนผังวงจร (Schematic)" ไม่เห็นรูป (SVG มีเฉพาะหน้า Lab 04)
+
+| สิ่งที่ทำ | รายละเอียด |
+|---|---|
+| SVG ประจำโหมด | `templates/index.html` เพิ่ม `<figure class="bias-figure"><svg class="bias-schematic">` แสดงทันที ไม่ต้องกด — มี 3 แบบตาม `mode`: divider (R1/R2/RC/RE), fixed (RB/RC, emitter ต่อ GND ตรง), emitter (RB/RC/RE) |
+| ไม่ใส่ค่าตัวเลข | มีแต่ป้าย R1/R2/RB/RC/RE/Q1 NPN/VCC/GND — ไม่มีผลคำนวณฝังในรูป (ตาม AGENTS.md) |
+| Fallback เดิมยังอยู่ | ย้าย ASCII `<details>` ไปเป็น "แผนผังแบบตัวอักษร (Fallback / screen reader)" สำหรับ accessibility |
+| CSS | `.bias-figure`, `.bias-schematic`, `.schematic-label`, `.node-label` อยู่ในส่วน Lab 03 (theme มืดเดิม) ไม่กระทบ `.sim-*` ของ Lab 04 |
+
+### ตรวจรับ
+- Browser จริง viewport 1000 px: 3 โหมด SVG มองเห็น (`w=392,h=304`) · label ครบ · resistor ถูกต้องตามโหมด
+- 390 px iframe: `scrollWidth == clientWidth == 390` ไม่มี element ล้ำขอบ · SVG `272×211`
+- Public tunnel: `GET /?mode=...` ทุกโหมดมี `bias-schematic` + `Q1 NPN` + ป้าย resistor ถูกต้อง
+- Automated: **86 tests OK** (เพิ่ม `test_index_shows_visible_circuit_svg_for_every_mode` — HTTP test ตรวจทุกโหมด)
+
+---
+
 ## 21. ทุก Analysis แสดงทั้ง 2 กราฟ (ตาม screenshot ที่ผู้ใช้ส่งเพิ่ม)
 
 ผู้ใช้ต้องการให้กด **DC / AC / Transient** แล้วเห็น **Bode response + Input/Output waveforms พร้อมกัน** เหมือนภาพในข้อ 20 (ภาพเป้าหมายมีกรอบกราฟ 2 ช่องคงที่ และแท็บอยู่ด้านบน)

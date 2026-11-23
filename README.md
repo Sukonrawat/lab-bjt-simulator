@@ -122,9 +122,9 @@ Q1 c b e QNPN
 
 ```bash
 python -m unittest discover -s tests -v
-# → Ran 85 tests OK (48 Lab 03 + 37 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
+# → Ran 86 tests OK (49 Lab 03 + 37 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
 NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-# → Ran 85 tests OK (ไม่มี skip)
+# → Ran 86 tests OK (ไม่มี skip)
 ```
 
 ---
@@ -137,12 +137,12 @@ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s t
 ├── dc_bias.py                 # Lab 03 analytic engine (ห้าม import Flask)
 ├── spice_engine.py            # Lab 04 ngspice adapter (ห้าม import Flask)
 ├── templates/
-│   ├── index.html             # Lab 03 calculator
+│   ├── index.html             # Lab 03 calculator + visible mode-specific circuit SVG
 │   └── simulator.html         # Lab 04 simulator + plots
 ├── static/style.css           # presentation only
 ├── tests/
 │   ├── test_dc_bias.py        # 25 engineering tests
-│   ├── test_web.py            # 23 Lab 03 HTTP tests
+│   ├── test_web.py            # 24 Lab 03 HTTP tests (รวม circuit SVG)
 │   ├── test_spice_engine.py   # netlist/parser/error/plot tests
 │   └── test_simulation_web.py # Lab 04 HTTP tests (mock engine)
 ├── docs/

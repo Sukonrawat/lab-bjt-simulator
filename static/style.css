@@ -143,6 +143,31 @@ tbody td { font-variant-numeric: tabular-nums; font-weight: 700; }
   overflow-x: auto;
 }
 
+/* Lab 03 — visible circuit diagram (one SVG per bias mode) */
+.bias-figure {
+  margin: 1rem 0 0;
+  padding: .6rem .8rem .4rem;
+  background: var(--card-alt);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  text-align: center;
+}
+.bias-figure figcaption { margin-top: .35rem; color: var(--muted); font-size: .8rem; }
+.bias-schematic {
+  display: block;
+  width: 100%;
+  max-width: 25rem;
+  height: auto;
+  margin: 0 auto;
+  color: var(--accent);
+}
+.bias-schematic .schematic-label {
+  fill: var(--muted);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 14px;
+}
+.bias-schematic .node-label { fill: var(--ok); font-weight: 700; }
+
 .page-footer { margin-top: 2rem; text-align: center; color: var(--muted); font-size: .8rem; }
 
 @media (max-width: 780px) {

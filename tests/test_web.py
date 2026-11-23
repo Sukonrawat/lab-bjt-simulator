@@ -29,6 +29,16 @@ class WebAppTest(unittest.TestCase):
         self.assertIn('name="mode"', body)
         self.assertIn("เปลี่ยนโหมด", body)
 
+    def test_index_shows_visible_circuit_svg_for_every_mode(self):
+        for mode, resistor in (("divider", "R1"), ("fixed", "RB"), ("emitter", "RB")):
+            with self.subTest(mode=mode):
+                body = self.client.get(f"/?mode={mode}").get_data(as_text=True)
+                self.assertIn('class="bias-schematic"', body)
+                self.assertIn("NPN common-emitter DC bias", body)
+                self.assertIn(f">{resistor}<", body)
+                self.assertIn("Q1 NPN", body)
+                self.assertIn("GND", body)
+
     def test_a2_post_calculate_returns_backend_results(self):
         # Lab 03 A2 is the divider case in the web suite (name kept from Lab 02).
         response = self.client.post(

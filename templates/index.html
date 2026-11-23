@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BJT DC Bias Calculator · ENG29 2121 Lab 03</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">ENG29 2121 · Lab 03</p>
+      <h1>BJT DC Bias Calculator</h1>
+      <p class="subtitle">คำนวณจุดทำงาน DC (DC Operating Point) ของวงจรขยาย NPN Common Emitter</p>
+      <p class="nav-links"><a href="/simulator">Lab 04 → CE Amplifier Simulator (DC / AC / Transient ด้วย ngspice)</a></p>
+    </header>
+
+    {% if invalid_mode %}
+      <section class="card error-card" role="alert" id="error">
+        <h2>โหมดไบอัสไม่ถูกต้อง</h2>
+        <p>รองรับเฉพาะ <code>divider</code>, <code>fixed</code> และ <code>emitter</code> เท่านั้น</p>
+        <p><a href="/">กลับไปที่Voltage Divider Bias</a></p>
+      </section>
+    {% else %}
+      <section class="card mode-card">
+        <h2>โหมดไบอัส</h2>
+        <form method="get" action="/" class="mode-switch">
+          <label for="mode">เลือกโหมดไบอัส</label>
+          <select id="mode" name="mode">
+            {% for key in modes %}
+              <option value="{{ key }}" {% if key == mode %}selected{% endif %}>{{ mode_labels[key] }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="secondary">เปลี่ยนโหมด</button>
+        </form>
+        <p class="mode-hint">เปลี่ยนโหมดเป็น GET ปกติ — หน้าเว็บ reload ไม่ใช้ JavaScript</p>
+      </section>
+
+      <div class="layout">
+        <section class="card input-card">
+          <h2>{{ mode_label }}</h2>
+
+          <form method="post" action="/calculate" class="calc-form">
+            <input type="hidden" name="mode" value="{{ mode }}">
+
+            {% for name in fields %}
+              <div class="field">
+                <label for="field-{{ name }}">{{ field_labels[name] }}</label>
+                <input
+                  id="field-{{ name }}"
+                  name="{{ name }}"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  value="{{ values[name] }}"
+                  required
+                >
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="primary">คำนวณจุดทำงาน DC</button>
+          </form>
+
+          {% if error %}
+            <div class="alert alert-error" role="alert" id="error">{{ error }}</div>
+          {% endif %}
+
+          <details class="schematic">
+            <summary>แผนผังวงจร (Schematic)</summary>
+            {% if mode == 'divider' %}
+              <pre>
+ VCC ──┬── R1 ──┬── R2 ── GND
+       │        │
+       │        Base (B)
+       RC      Q1 (NPN)
+       │        E
+       C────────┤
+       │        RE
+       VC       │
+                GND
+              </pre>
+            {% elif mode == 'fixed' %}
+              <pre>
+ VCC ──┬── RB ── Base (B)
+       │          Q1 (NPN)
+       RC         E ── GND (ตรง ๆ)
+       │
+       C ── VC
+              </pre>
+            {% else %}
+              <pre>
+ VCC ──┬── RB ── Base (B)
+       │          Q1 (NPN)
+       RC         E ── RE ── GND
+       │
+       C ── VC
+              </pre>
+            {% endif %}
+          </details>
+        </section>
+
+        <section class="card output-card">
+          <h2>ผลลัพธ์</h2>
+
+          {% if result %}
+            <div class="badge badge-{{ result.region|lower|replace('-', '-') }}" id="region-badge">
+              {{ result.region }}
+            </div>
+
+            {% for warning in result.warnings %}
+              <div class="alert alert-warning" role="status">{{ warning }}</div>
+            {% endfor %}
+
+            {% if result.VTH is not none %}
+              <p class="derived">VTH = {{ display.VTH }} · RTH = {{ display.RTH }}</p>
+            {% endif %}
+
+            <table id="results">
+              <thead>
+                <tr><th>พารามิเตอร์</th><th>ค่า</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">VB</th><td id="vb-value">{{ display.VB }}</td></tr>
+                <tr><th scope="row">VE</th><td id="ve-value">{{ display.VE }}</td></tr>
+                <tr><th scope="row">VC</th><td id="vc-value">{{ display.VC }}</td></tr>
+                <tr><th scope="row">VCE</th><td id="vce-value">{{ display.VCE }}</td></tr>
+                <tr><th scope="row">IC</th><td id="ic-value">{{ display.IC }}</td></tr>
+                <tr><th scope="row">IB</th><td id="ib-value">{{ display.IB }}</td></tr>
+                <tr><th scope="row">IE</th><td id="ie-value">{{ display.IE }}</td></tr>
+              </tbody>
+            </table>
+          {% else %}
+            <p class="placeholder" id="results-placeholder">กด <strong>คำนวณจุดทำงาน DC</strong> เพื่อแสดงผลลัพธ์</p>
+          {% endif %}
+        </section>
+      </div>
+    {% endif %}
+
+    <footer class="page-footer">
+      Forward-Active Approximation · β และ VBE คงที่ตามค่าที่กรอก · SI ภายใน / mA·µA เฉพาะชั้นแสดงผล
+    </footer>
+  </main>
+</body>
+</html>

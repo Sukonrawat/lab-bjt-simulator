@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CE Amplifier Simulator · ENG29 2121 Lab 04</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page sim-page">
+    <header class="page-header">
+      <p class="eyebrow">ENG29 2121 · Lab 04</p>
+      <h1>CE Amplifier Simulator <span class="version">v1</span></h1>
+      <p class="subtitle">Common-Emitter Voltage Divider · ผลจาก <strong>ngspice</strong> จริง (DC / AC / Transient)
+        แยกจากค่าประมาณ Analytical ของ Lab 3</p>
+      <p class="nav-links">
+        <a href="/">← กลับไป DC Bias Calculator (Lab 3)</a>
+        <a href="/simulator?analysis=dc">DC</a>
+        <a href="/simulator?analysis=ac">AC</a>
+        <a href="/simulator?analysis=transient">Transient</a>
+      </p>
+    </header>
+
+    <div class="layout sim-layout">
+      <section class="card input-card">
+        <h2>Circuit &amp; Parameters</h2>
+
+        <div class="schematic-box">
+          <pre class="schematic-pre">
+ +VCC ──┬── R1 ──┬── R2 ── GND
+        │        │
+        RC      Base (b) ◄── Cin ◄── Vin ~
+        │       Q1 (NPN)
+        C ──────┤
+        │        E ── RE ── GND
+        └── Cout ── RL ── GND   (Vout)
+          </pre>
+          <p class="model-line">Model: <code>{{ model }}</code> · {{ model_card }}</p>
+        </div>
+
+        <form method="post" action="/simulate" class="calc-form sim-form">
+          <fieldset class="analysis-group">
+            <legend>Analysis Mode</legend>
+            {% for key in analyses %}
+              <label class="radio-chip">
+                <input type="radio" name="analysis" value="{{ key }}" {% if key == analysis %}checked{% endif %}>
+                <span>{{ key|upper if key != 'transient' else 'Transient' }}</span>
+              </label>
+            {% endfor %}
+          </fieldset>
+
+          <div class="field-grid">
+            {% for name, label in field_labels.items() %}
+              <div class="field">
+                <label for="sim-{{ name }}">{{ label }}</label>
+                <input id="sim-{{ name }}" name="{{ name }}" type="text"
+                       inputmode="decimal" value="{{ values[name] }}" required>
+              </div>
+            {% endfor %}
+          </div>
+
+          <button type="submit" class="primary">Run Simulation</button>
+        </form>
+      </section>
+
+      <section class="card output-card">
+        <div class="status-row">
+          <h2>Simulation &amp; Plots</h2>
+          {% if error %}
+            <span class="badge badge-saturation" id="run-status">Error</span>
+          {% elif result %}
+            <span class="badge badge-forward-active" id="run-status">Success</span>
+          {% else %}
+            <span class="badge badge-cutoff" id="run-status">Idle</span>
+          {% endif %}
+        </div>
+
+        {% if error %}
+          <div class="alert alert-error" role="alert" id="sim-error">
+            <strong>{{ error.message }}</strong>
+            {% if error.details %}
+              <details><summary>ngspice log (tail)</summary><pre class="log-box">{{ error.details }}</pre></details>
+            {% endif %}
+          </div>
+          <p class="placeholder">ไม่มีผลลัพธ์จากรอบก่อนแสดงเมื่อเกิด Error</p>
+        {% elif result %}
+          <p class="engine-line" id="engine-line">
+            <span class="badge badge-engine">Engine: ngspice</span>
+            <span>{{ engine_version }}</span>
+          </p>
+
+          {% if result.analysis == 'dc' %}
+            <h3>DC Operating Point <small>(SPICE .op)</small></h3>
+            <table id="spice-results">
+              <thead><tr><th>Node / Quantity</th><th>Value</th><th>Source</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">VB</th><td id="dc-vb">{{ '%.3f'|format(result.values.VB) }} V</td><td>ngspice .op</td></tr>
+                <tr><th scope="row">VE</th><td id="dc-ve">{{ '%.3f'|format(result.values.VE) }} V</td><td>ngspice .op</td></tr>
+                <tr><th scope="row">VC</th><td id="dc-vc">{{ '%.3f'|format(result.values.VC) }} V</td><td>ngspice .op</td></tr>
+                <tr><th scope="row">VCE</th><td id="dc-vce">{{ '%.3f'|format(result.values.VCE) }} V</td><td>ngspice .op</td></tr>
+                <tr><th scope="row">IC</th><td id="dc-ic">{{ '%.3f'|format(result.values.IC * 1000) }} mA</td><td>ngspice .op</td></tr>
+              </tbody>
+            </table>
+
+            {% if reference %}
+              <details class="reference-box" id="analytical-reference">
+                <summary>Analytical reference (Lab 3 — สมมติ β=100, VBE=0.70 V คงที่)</summary>
+                <table>
+                  <tbody>
+                    <tr><th scope="row">IC (analytical)</th><td id="ref-ic">{{ reference_display.IC }}</td></tr>
+                    <tr><th scope="row">VCE (analytical)</th><td id="ref-vce">{{ reference_display.VCE }}</td></tr>
+                  </tbody>
+                </table>
+                <p class="soft">ค่าสองชุดนี้มาจากคนละโมเดล จึงไม่บังคับให้ตรงทุกหลัก — SPICE ขึ้นกับ BJT model และสภาวะจริง</p>
+              </details>
+            {% endif %}
+
+          {% elif result.analysis == 'ac' %}
+            <h3>AC Frequency Response <small>(SPICE .ac)</small></h3>
+            <p class="measure-note">Gain = V(out)/V(in) วัดที่โหนด <code>in</code> (ก่อน Cin) กับ <code>out</code> (บน RL) · sweep 1 Hz – 100 MHz</p>
+            <div class="plot" id="plot-gain">{{ plots.gain|safe }}</div>
+            <div class="plot" id="plot-phase">{{ plots.phase|safe }}</div>
+            <table id="spice-results">
+              <tbody>
+                <tr><th scope="row">Max |gain|</th><td id="ac-gain">{{ '%.2f'|format(result.values.MAX_GAIN_DB) }} dB</td></tr>
+                <tr><th scope="row">at frequency</th><td id="ac-freq">{{ '%.3g'|format(result.values.GAIN_FREQ_HZ) }} Hz</td></tr>
+                <tr><th scope="row">Phase there</th><td id="ac-phase">{{ '%.1f'|format(result.values.PHASE_AT_MAX_DEG) }}°</td></tr>
+              </tbody>
+            </table>
+            {% if result.sweep_note %}<p class="alert alert-warning">{{ result.sweep_note }}</p>{% endif %}
+
+          {% else %}
+            <h3>Transient Response <small>(SPICE .tran)</small></h3>
+            <div class="plot" id="plot-waveform">{{ plots.waveform|safe }}</div>
+            <div class="legend-line">
+              <span><i class="swatch vin"></i> Vin (teal)</span>
+              <span><i class="swatch vout"></i> Vout (orange)</span>
+            </div>
+            <table id="spice-results">
+              <tbody>
+                <tr><th scope="row">Vin peak</th><td id="tran-vin">{{ '%.4f'|format(result.values.VIN_PEAK) }} V</td></tr>
+                <tr><th scope="row">Vout peak</th><td id="tran-vout">{{ '%.3f'|format(result.values.VOUT_PEAK) }} V</td></tr>
+                <tr><th scope="row">Samples</th><td id="tran-samples">{{ result.series.time|length }}</td></tr>
+                {% if result.values.INVERSION_CORR is defined %}
+                  <tr><th scope="row">Vin↔Vout correlation</th><td id="tran-correlation">{{ '%.4f'|format(result.values.INVERSION_CORR) }}</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+            {% if result.values.INVERSION_CORR is defined and result.values.INVERSION_CORR < -0.5 %}
+              <p class="measure-note" id="inversion-note">สหสัมพันธ์ติดลบ → Common-Emitter กลับเฟส (~180°) ตามข้อสมมติวงจร</p>
+            {% else %}
+              <p class="measure-note" id="inversion-note">ไม่ตรวจพบการกลับเฟสชัดเจนจากข้อมูลรันนี้ — ตรวจ netlist/model ก่อนสรุป</p>
+            {% endif %}
+          {% endif %}
+
+          <details class="reference-box">
+            <summary>ngspice netlist &amp; log (หลักฐานที่มา)</summary>
+            <h4>Netlist</h4><pre class="log-box">{{ result.netlist }}</pre>
+            <h4>Log tail</h4><pre class="log-box">{{ result.log_excerpt }}</pre>
+          </details>
+        {% else %}
+          <p class="placeholder" id="results-placeholder">
+            เลือก Analysis Mode แล้วกด <strong>Run Simulation</strong> — ค่าที่แสดงจะมาจาก ngspice เท่านั้น
+          </p>
+        {% endif %}
+      </section>
+    </div>
+
+    <footer class="page-footer">
+      ENG29 2121 · Lab 04 · กราฟและตัวเลขสร้างจากผลรันจริง — ห้ามใช้ค่าสำเร็จรูปเมื่อ solver ล้มเหลว
+    </footer>
+  </main>
+</body>
+</html>

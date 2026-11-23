@@ -1,0 +1,14 @@
+$ python -m unittest discover -s tests -v
+... (25 engineering tests + 23 HTTP tests)
+----------------------------------------------------------------------
+Ran 48 tests in 0.018s
+
+OK
+
+$ curl -sS -o /dev/null -w '%{http_code}' https://constraints-humanity-misc-salary.trycloudflare.com/
+200
+$ curl -sS -o /dev/null -w '%{http_code}' 'https://constraints-humanity-misc-salary.trycloudflare.com/?mode=fixed'
+200
+$ curl -sS -d 'mode=divider&VCC=12&R1=100000&R2=22000&RC=2200&RE=1000&beta=100&VBE=0.70' \
+    https://constraints-humanity-misc-salary.trycloudflare.com/calculate | grep 'id="ic-value"'
+<tr><th scope="row">IC</th><td id="ic-value">1.230 mA</td></tr>

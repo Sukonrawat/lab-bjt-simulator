@@ -196,3 +196,27 @@ Screenshot (server-local paths):
 | Automated tests | `NGSPICE_BIN=... python -m unittest discover -s tests` → **81 tests OK** (A1–A5, B1–B8 ไม่ถอยหลัง) |
 
 **ข้อจำกัดที่ยังตรงตามใบงาน:** ไม่เพิ่ม Emitter bypass, animation หรือ circuit editor — ภาพเป้าหมายเป็น wireframe สำหรับตำแหน่งฟังก์ชัน (ใบงานระบุ *“ไม่กำหนดให้ทุกทีมทำ Layout เหมือนกัน”* และ *“แนะนำให้การอ่านวงจรและกราฟสำคัญกว่าการเพิ่ม Effects”*)
+
+---
+
+## 21. ทุก Analysis แสดงทั้ง 2 กราฟ (ตาม screenshot ที่ผู้ใช้ส่งเพิ่ม)
+
+ผู้ใช้ต้องการให้กด **DC / AC / Transient** แล้วเห็น **Bode response + Input/Output waveforms พร้อมกัน** เหมือนภาพในข้อ 20 (ภาพเป้าหมายมีกรอบกราฟ 2 ช่องคงที่ และแท็บอยู่ด้านบน)
+
+### วิธีทำที่ยังยึด "ผลจริงเท่านั้น"
+- `app.py` หลัง validate จะรัน analysis ที่เลือก **แล้วรัน AC + Transient เพิ่มเสมอ** (`run_simulation` ถูกเรียก 3 ครั้งสำหรับ DC, 2 ครั้งสำหรับ AC/Transient)
+- `plots` รวม SVG จากทุก result ของ **รอบเดียวกัน** — ไม่ cache, ไม่ใช้ค่าค้าง
+- ถ้าการรันเสริมล้มเหลว → HTTP **503 + Error ไม่มีตาราง/กราฟ** (ทดสอบใน `test_secondary_plot_failure_has_no_stale_success`)
+- ฝั่งขวา: analysis ที่เลือกแสดงตารางเต็ม (`#spice-results`) ส่วนอีก analysis แสดงสรุปแบบ inline จาก result ของรันเดียวกัน
+
+### ผลรันจริง (OpenCode Browser)
+
+| แท็บที่กด | กราฟที่เห็น | จุดข้อมูล | สรุปฝั่งขวา | เวลา |
+|---|---|---|---|---|
+| **DC** | Bode (gain+phase) + waveform ครบ | 267 / 267 / 268 | AC `4.86 dB · −179.7° · 490 Hz`, Tran `0.0100 V · 0.017 V · −1.0000` | ~151 ms |
+| **AC** | Bode (gain+phase) + waveform ครบ | 267 / 267 / 268 | Tran `0.0100 V · 0.017 V · −1.0000` | ~115 ms |
+| **Transient** | Bode (gain+phase) + waveform ครบ | 267 / 267 / 268 | AC `4.86 dB · −179.7° · 490 Hz` | ~109 ms |
+
+- ทุกเคส `run-status = Success` และ `Engine: ngspice` ปรากฏ
+- 390 px: 3 กราฟอยู่ครบ, `scrollWidth == clientWidth == 390`, ไม่มี element ล้ำขอบ
+- Automated tests: **85 tests OK** (เพิ่มจาก 81 → 85: 4 tests ใหม่สำหรับ "ทั้ง 2 กราฟทุกแท็บ" + error path ของการรันเสริม)

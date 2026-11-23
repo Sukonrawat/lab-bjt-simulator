@@ -4,8 +4,8 @@ Ran 48 tests in 0.018s
 OK
 
 $ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-... (48 Lab 03 + 33 Lab 04, ไม่มี skip)
-Ran 81 tests in 0.095s
+... (48 Lab 03 + 37 Lab 04, ไม่มี skip)
+Ran 85 tests in 0.113s
 OK
 
 $ python -m unittest discover -s tests             # ไม่ตั้ง NGSPICE_BIN
@@ -26,6 +26,13 @@ B5 tran -> corr -1.0000 (inverted)                                        PASS
 B6 20 mV / 2 kHz -> Vout peak 0.017->0.035 V                              PASS
 B7 RE=0 -> 400 + Error; bad NGSPICE_BIN -> 503 + Error, ไม่มี stale data  PASS
 B8 390 px iframe -> scrollWidth == clientWidth == 390, 1 column          PASS
+
+# ทุกแท็บแสดงทั้ง 2 กราฟ (เพิ่มตาม screenshot ผู้ใช้)
+DC  -> run_simulation calls [dc, ac, transient] -> plot-gain/phase/waveform  PASS
+AC  -> calls [ac, transient]                    -> 3 plots + tran summary    PASS
+Tran-> calls [transient, ac]                    -> 3 plots + AC summary      PASS
+secondary run fails -> 503 Error, ไม่มี spice-results/plot-gain              PASS
+browser 3 tabs -> 267/267/268 points ทุกแท็บ, 390 px ไม่มี overflow         PASS
 
 # หมายเหตุ public link
 ลิงก์เก่า https://constraints-humanity-misc-salary.trycloudflare.com ใช้ไม่ได้แล้ว

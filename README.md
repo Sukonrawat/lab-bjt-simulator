@@ -108,6 +108,7 @@ Q1 c b e QNPN
 - `.op` → `VB, VE, VC, VCE, IC` (IC คำนวณจากแรงดันตกบน RC เพราะ I(VCC) รวมกระแส divider ด้วย)
 - `.ac DEC 100 1 100MEG` → freq / gain(dB) / phase(deg) วัดที่ `in` กับ `out`
 - `.tran` → time / vin / vout (4 periods, 400 steps/period) + correlation เพื่อยืนยันการกลับเฟส
+- **ทุกครั้งที่กด Run** (DC/AC/Transient) จะรัน AC + Transient ด้วยเสมอ → แสดง **Bode + waveform ทั้ง 2 กราฟ** จากผลรอบเดียวกัน (ถ้ารันเสริมล้มเหลว → 503 ไม่มีกราฟค้าง)
 
 **หมายเหตุหน่วย phase:** ngspice-47 ในเครื่องนี้เขียน `VP()` ออกมาเป็น **radian** แม้หลายคู่มือบอก degree
 (ทดสอบด้วย RC ธรรมดา: ที่ 1 Hz ได้ `-6.28310e-03`) → `parse_ac()` คูณ `180/π` ก่อนแสดงผล
@@ -121,9 +122,9 @@ Q1 c b e QNPN
 
 ```bash
 python -m unittest discover -s tests -v
-# → Ran 81 tests OK (48 Lab 03 + 33 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
+# → Ran 85 tests OK (48 Lab 03 + 37 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
 NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
-# → Ran 81 tests OK (ไม่มี skip)
+# → Ran 85 tests OK (ไม่มี skip)
 ```
 
 ---

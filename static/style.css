@@ -395,8 +395,20 @@ tbody td { font-variant-numeric: tabular-nums; font-weight: 700; }
 .plot-frame.empty { min-height: 7.5rem; }
 .plot-caption { margin: 0 0 .3rem; color: #526c7f; font-size: .72rem; }
 .plot-frame .plot { margin: 0; border: 0; background: transparent; }
+.plot-frame .plot + .plot {
+  margin-top: .5rem;
+  padding-top: .4rem;
+  border-top: 1px dashed #dce7ee;
+}
 .plot-frame .plot svg { display: block; }
-.plot-card .legend-line { color: #547084; font-size: .72rem; padding-top: .3rem; }
+.plot-card .legend-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  color: #547084;
+  font-size: .72rem;
+  padding-top: .3rem;
+}
 .plot-card .alert { margin: .6rem 0; font-size: .78rem; }
 .plot-card .alert-error { background: #fff1f1; border-color: #a33b3b; color: #8a2f2f; }
 .plot-card .alert-warning { background: #fff8e6; border-color: #c4931f; color: #7a5c11; }
@@ -407,6 +419,13 @@ tbody td { font-variant-numeric: tabular-nums; font-weight: 700; }
 .result-block.is-active h3 { color: #103658; font-weight: 700; }
 .result-block .result-empty { margin: 0; color: #7c93a3; font-size: .76rem; }
 .result-block .result-empty span { color: #9cb2c2; font-style: italic; }
+.result-block .result-inline {
+  margin: 0;
+  color: #13645c;
+  font-size: .74rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
 .result-block table, .result-block .reference-box table { width: 100%; }
 .result-block th, .result-block td {
   padding: .25rem .2rem;

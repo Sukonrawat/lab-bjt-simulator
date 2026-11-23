@@ -88,6 +88,8 @@ def _simulator_context(
     values: dict[str, str] | None = None,
     *,
     result: spice_engine.SimulationResult | None = None,
+    ac_result: spice_engine.SimulationResult | None = None,
+    tran_result: spice_engine.SimulationResult | None = None,
     plots: dict[str, str] | None = None,
     error: spice_engine.SimulationError | None = None,
 ) -> dict[str, Any]:
@@ -113,6 +115,9 @@ def _simulator_context(
         "model": spice_engine.BJT_MODEL,
         "model_card": spice_engine.MODEL_CARD,
         "result": result,
+        # Both plots are always on screen; each comes from its own real run.
+        "ac_result": ac_result,
+        "tran_result": tran_result,
         "plots": plots or {},
         "error": error,
         "reference": reference,
@@ -152,18 +157,33 @@ def simulate() -> tuple[str, int] | str:
             400,
         )
 
+    # The target screen shows BOTH the Bode response and the waveform no
+    # matter which tab is selected. Run the analyses needed for those plots;
+    # any failure fails the whole request so no stale plot can survive.
     try:
-        result = spice_engine.run_simulation(params, analysis)
+        results = {analysis: spice_engine.run_simulation(params, analysis)}
+        for needed in ("ac", "transient"):
+            if needed not in results:
+                results[needed] = spice_engine.run_simulation(params, needed)
     except spice_engine.SimulationError as exc:
         return (
             render_template("simulator.html", **_simulator_context(analysis, raw, error=exc)),
             503,
         )
 
-    plots = spice_engine.build_plots(result)
+    plots: dict[str, str] = {}
+    for run in results.values():
+        plots.update(spice_engine.build_plots(run))
     return render_template(
         "simulator.html",
-        **_simulator_context(analysis, raw, result=result, plots=plots),
+        **_simulator_context(
+            analysis,
+            raw,
+            result=results[analysis],
+            ac_result=results.get("ac"),
+            tran_result=results.get("transient"),
+            plots=plots,
+        ),
     )
 
 

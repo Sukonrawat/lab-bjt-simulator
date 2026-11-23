@@ -15,6 +15,11 @@ DEFAULT_FORM = {
 }
 
 
+def _by_analysis(params, analysis):
+    """Mock side effect matching run_simulation(params, analysis)."""
+    return _result(analysis)
+
+
 def _result(analysis: str) -> se.SimulationResult:
     if analysis == "dc":
         return se.SimulationResult(
@@ -112,7 +117,11 @@ class SimulateRouteTest(unittest.TestCase):
         ) as run:
             response = self.client.post("/simulate", data=DEFAULT_FORM)
         self.assertEqual(response.status_code, 200)
-        run.assert_called_once()
+        # DC is the selected analysis, but AC + transient must also run so
+        # that both target-screen plots come from this request.
+        self.assertEqual(
+            [call.args[1] for call in run.call_args_list], ["dc", "ac", "transient"]
+        )
         body = response.get_data(as_text=True)
         self.assertIn('id="run-status">Success', body)
         self.assertIn("Engine: ngspice", body)
@@ -147,6 +156,59 @@ class SimulateRouteTest(unittest.TestCase):
         self.assertIn('id="tran-correlation">-0.9990', body)
         self.assertIn('id="inversion-note"', body)
         self.assertIn("Vin (teal)", body)
+
+    def test_dc_run_renders_both_target_plots(self):
+        with mock.patch.object(
+            web_app.spice_engine, "run_simulation", side_effect=_by_analysis
+        ):
+            response = self.client.post("/simulate", data=DEFAULT_FORM)
+        body = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        for plot_id in ("plot-gain", "plot-phase", "plot-waveform"):
+            self.assertIn(f'id="{plot_id}"', body)
+
+    def test_ac_run_renders_bode_and_waveform(self):
+        with mock.patch.object(
+            web_app.spice_engine, "run_simulation", side_effect=_by_analysis
+        ) as run:
+            response = self.client.post("/simulate", data=dict(DEFAULT_FORM, analysis="ac"))
+        body = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([call.args[1] for call in run.call_args_list], ["ac", "transient"])
+        for plot_id in ("plot-gain", "plot-phase", "plot-waveform"):
+            self.assertIn(f'id="{plot_id}"', body)
+        self.assertIn("-0.9990", body)  # transient summary of the same run
+
+    def test_transient_run_renders_bode_and_waveform(self):
+        with mock.patch.object(
+            web_app.spice_engine, "run_simulation", side_effect=_by_analysis
+        ) as run:
+            response = self.client.post(
+                "/simulate", data=dict(DEFAULT_FORM, analysis="transient")
+            )
+        body = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([call.args[1] for call in run.call_args_list], ["transient", "ac"])
+        for plot_id in ("plot-gain", "plot-phase", "plot-waveform"):
+            self.assertIn(f'id="{plot_id}"', body)
+        self.assertIn("12.50 dB", body)  # AC summary of the same run
+
+    def test_secondary_plot_failure_has_no_stale_success(self):
+        def fail_secondary(params, analysis):
+            if analysis == "dc":
+                return _result("dc")
+            raise se.SimulationError("AC ล้มเหลว", "fake tail")
+
+        with mock.patch.object(
+            web_app.spice_engine, "run_simulation", side_effect=fail_secondary
+        ):
+            response = self.client.post("/simulate", data=DEFAULT_FORM)
+        self.assertEqual(response.status_code, 503)
+        body = response.get_data(as_text=True)
+        self.assertIn("AC ล้มเหลว", body)
+        self.assertNotIn('id="run-status">Success', body)
+        self.assertNotIn('id="spice-results"', body)
+        self.assertNotIn('id="plot-gain"', body)
 
     def test_lab03_routes_still_work(self):
         self.assertEqual(self.client.get("/health").json, {"status": "ok"})

@@ -121,47 +121,41 @@
           </div>
           <p class="placeholder">ไม่มีผลลัพธ์จากรอบก่อนแสดงเมื่อเกิด Error</p>
         {% elif result %}
-          {% if result.analysis == 'dc' %}
-            <h3>DC Operating Point <small>(SPICE .op)</small></h3>
-            <p class="measure-note">ค่าจริงจาก ngspice แสดงใน <strong>Engineering Results</strong> ด้านขวา — ส่วนกลางนี้สงวนไว้สำหรับกราฟความถี่/สัญญาณเมื่อเลือก AC หรือ Transient</p>
-            <div class="plot-frame empty">
-              <p class="plot-caption">Bode response</p>
-              <p class="placeholder">เลือก AC แล้วกด Run Simulation เพื่อ plot gain/phase จากผลรันจริง</p>
-            </div>
-            <div class="plot-frame empty">
-              <p class="plot-caption">Input / Output waveforms</p>
-              <p class="placeholder">เลือก Transient แล้วกด Run Simulation เพื่อ plot Vin / Vout จากผลรันจริง</p>
-            </div>
+          <p class="measure-note">ทุกการกด Run จะรัน <strong>AC และ Transient ด้วยเสมอ</strong> — ทั้ง 2 กราฟจึงแสดงจากข้อมูลจริงของรอบนี้โดยไม่ใช้ค่าค้าง</p>
 
-          {% elif result.analysis == 'ac' %}
-            <h3>AC Frequency Response <small>(SPICE .ac)</small></h3>
-            <p class="measure-note">Gain = V(out)/V(in) วัดที่โหนด <code>in</code> (ก่อน Cin) กับ <code>out</code> (บน RL) · sweep 1 Hz – 100 MHz</p>
-            <div class="plot-frame">
-              <p class="plot-caption">Bode response · Gain (dB)</p>
+          {# ---- Graph 1: Bode response (from the real .ac run) ---- #}
+          <div class="plot-frame">
+            <p class="plot-caption">Bode response</p>
+            {% if ac_result and ac_result.analysis == 'ac' and plots.gain %}
               <div class="plot" id="plot-gain">{{ plots.gain|safe }}</div>
-            </div>
-            <div class="plot-frame">
-              <p class="plot-caption">Bode response · Phase (deg)</p>
               <div class="plot" id="plot-phase">{{ plots.phase|safe }}</div>
-            </div>
-            {% if result.sweep_note %}<p class="alert alert-warning">{{ result.sweep_note }}</p>{% endif %}
+              <div class="legend-line">
+                <span>Gain (dB)</span><span>Phase (deg)</span><span>Frequency (Hz, log scale)</span>
+              </div>
+              {% if ac_result.sweep_note %}<p class="alert alert-warning">{{ ac_result.sweep_note }}</p>{% endif %}
+            {% else %}
+              <p class="placeholder">ไม่มีข้อมูล AC จากรอบนี้ — ตรวจ netlist/log ด้านล่าง</p>
+            {% endif %}
+          </div>
 
-          {% else %}
-            <h3>Transient Response <small>(SPICE .tran)</small></h3>
-            <div class="plot-frame">
-              <p class="plot-caption">Input / Output waveforms · Time (ms)</p>
+          {# ---- Graph 2: Vin / Vout waveform (from the real .tran run) ---- #}
+          <div class="plot-frame">
+            <p class="plot-caption">Input / Output waveforms · Time (ms)</p>
+            {% if tran_result and tran_result.analysis == 'transient' and plots.waveform %}
               <div class="plot" id="plot-waveform">{{ plots.waveform|safe }}</div>
               <div class="legend-line">
                 <span><i class="swatch vin"></i> Vin (teal)</span>
                 <span><i class="swatch vout"></i> Vout (orange)</span>
               </div>
-            </div>
-            {% if result.values.INVERSION_CORR is defined and result.values.INVERSION_CORR < -0.5 %}
-              <p class="measure-note" id="inversion-note">สหสัมพันธ์ติดลบ → Common-Emitter กลับเฟส (~180°) ตามข้อสมมติวงจร</p>
+              {% if tran_result.values.INVERSION_CORR is defined and tran_result.values.INVERSION_CORR < -0.5 %}
+                <p class="measure-note" id="inversion-note">สหสัมพันธ์ติดลบ → Common-Emitter กลับเฟส (~180°) ตามข้อสมมติวงจร</p>
+              {% else %}
+                <p class="measure-note" id="inversion-note">ไม่ตรวจพบการกลับเฟสชัดเจนจากข้อมูลรันนี้ — ตรวจ netlist/model ก่อนสรุป</p>
+              {% endif %}
             {% else %}
-              <p class="measure-note" id="inversion-note">ไม่ตรวจพบการกลับเฟสชัดเจนจากข้อมูลรันนี้ — ตรวจ netlist/model ก่อนสรุป</p>
+              <p class="placeholder">ไม่มีข้อมูล Transient จากรอบนี้ — ตรวจ netlist/log ด้านล่าง</p>
             {% endif %}
-          {% endif %}
+          </div>
 
           <details class="reference-box">
             <summary>ngspice netlist &amp; log (หลักฐานที่มา)</summary>
@@ -223,6 +217,12 @@
                 <tr><th scope="row">Frequency</th><td id="ac-freq">{{ '%.3g'|format(result.values.GAIN_FREQ_HZ) }} Hz</td></tr>
               </tbody>
             </table>
+          {% elif ac_result and ac_result.analysis == 'ac' %}
+            <p class="result-inline">
+              {{ '%.2f'|format(ac_result.values.MAX_GAIN_DB) }} dB ·
+              {{ '%.1f'|format(ac_result.values.PHASE_AT_MAX_DEG) }}° ·
+              {{ '%.3g'|format(ac_result.values.GAIN_FREQ_HZ) }} Hz
+            </p>
           {% else %}
             <p class="result-empty">Gain / Phase / Frequency — <span>not run</span></p>
           {% endif %}
@@ -241,6 +241,12 @@
                 {% endif %}
               </tbody>
             </table>
+          {% elif tran_result and tran_result.analysis == 'transient' %}
+            <p class="result-inline">
+              {{ '%.4f'|format(tran_result.values.VIN_PEAK) }} V ·
+              {{ '%.3f'|format(tran_result.values.VOUT_PEAK) }} V ·
+              {{ '%.4f'|format(tran_result.values.INVERSION_CORR) }}
+            </p>
           {% else %}
             <p class="result-empty">Vin / Vout / Time — <span>not run</span></p>
           {% endif %}

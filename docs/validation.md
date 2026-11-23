@@ -55,8 +55,8 @@ Public link ที่ใช้ตรวจ A1–A5: <https://constraints-humanit
 > เครื่องมือที่ใช้จริง: **OpenCode Browser** (Playwright MCP ไม่พร้อมใช้เพราะไม่มี node/npx)
 
 ## 11. Automated tests (Lab 03 baseline)
-`python -m unittest discover -s tests -v` → **Ran 90 tests … OK**
-(49 Lab 03 [25 engineering + 24 HTTP] + 41 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
+`python -m unittest discover -s tests -v` → **Ran 91 tests … OK**
+(49 Lab 03 [25 engineering + 24 HTTP] + 42 Lab 04; 1 real-engine test ข้ามถ้าไม่ตั้ง NGSPICE_BIN)
 
 ---
 
@@ -210,7 +210,7 @@ Screenshot ที่ commit ไว้ (OpenCode Browser, หลังแก้ a
 | AC | Success · 4.86 dB @ 490 Hz · −179.7° · polyline 267 จุด/กราฟ · caption `Gain (dB)` / `Phase (deg)` |
 | Transient | Success · 2 waveform · Vin 0.0100 V / Vout 0.017 V / 1608 samples / corr −1.0000 · legend `Vin (teal) / Vout (orange)` |
 | Console error | ไม่มี |
-| Automated tests | `NGSPICE_BIN=... python -m unittest discover -s tests` → **90 tests OK** (A1–A5, B1–B8 ไม่ถอยหลัง) |
+| Automated tests | `NGSPICE_BIN=... python -m unittest discover -s tests` → **91 tests OK** (A1–A5, B1–B8 ไม่ถอยหลัง) |
 
 **ข้อจำกัดที่ยังตรงตามใบงาน:** ไม่เพิ่ม Emitter bypass, animation หรือ circuit editor — ภาพเป้าหมายเป็น wireframe สำหรับตำแหน่งฟังก์ชัน (ใบงานระบุ *“ไม่กำหนดให้ทุกทีมทำ Layout เหมือนกัน”* และ *“แนะนำให้การอ่านวงจรและกราฟสำคัญกว่าการเพิ่ม Effects”*)
 
@@ -232,7 +232,7 @@ Screenshot ที่ commit ไว้ (OpenCode Browser, หลังแก้ a
 - Browser จริง viewport 1000 px: 3 โหมด SVG มองเห็น (`w=392,h=304`) · label ครบ · resistor ถูกต้องตามโหมด
 - 390 px iframe: `scrollWidth == clientWidth == 390` ไม่มี element ล้ำขอบ · SVG `272×211`
 - Public tunnel: `GET /?mode=...` ทุกโหมดมี `bias-schematic` + `Q1 NPN` + ป้าย resistor ถูกต้อง
-- Automated: **90 tests OK** (เพิ่ม `test_index_shows_visible_circuit_svg_for_every_mode` — HTTP test ตรวจทุกโหมด)
+- Automated: **91 tests OK** (เพิ่ม `test_index_shows_visible_circuit_svg_for_every_mode` — HTTP test ตรวจทุกโหมด)
 
 ---
 
@@ -256,7 +256,7 @@ Screenshot ที่ commit ไว้ (OpenCode Browser, หลังแก้ a
 
 - ทุกเคส `run-status = Success` และ `Engine: ngspice` ปรากฏ
 - 390 px: 3 กราฟอยู่ครบ, `scrollWidth == clientWidth == 390`, ไม่มี element ล้ำขอบ
-- Automated tests: **90 tests OK** (81 → 85 จาก "ทั้ง 2 กราฟทุกแท็บ" + error path; 85 → 89 จาก test รูปวงจร Lab 03 และ 3 tests การเชื่อม ngspice; 89 → 90 จาก test `Running…` + หน่วย `Time (s)`)
+- Automated tests: **91 tests OK** (81 → 85 จาก "ทั้ง 2 กราฟทุกแท็บ" + error path; 85 → 89 จาก test รูปวงจร Lab 03 และ 3 tests การเชื่อม ngspice; 89 → 90 จาก test `Running…` + หน่วย `Time (s)`; 90 → 91 จาก test ลิงก์ 3 โหมด Lab 03 ในหน้า Lab 04)
 
 ### 23. เชื่อม ngspice — ปิดจุดที่ audit พบ (รันจริง + test)
 | จุด | ก่อนแก้ | หลังแก้ (evidence) |
@@ -286,11 +286,11 @@ Screenshot ที่ commit ไว้ (OpenCode Browser, หลังแก้ a
 
 ```text
 NGSPICE_BIN=... .venv/bin/python -m unittest discover -s tests
-Ran 90 tests in 0.109s
+Ran 91 tests in 0.134s
 OK
 
 .venv/bin/python -m unittest discover -s tests
-Ran 90 tests in 0.026s
+Ran 91 tests in 0.034s
 OK (skipped=1)
 ```
 
@@ -311,3 +311,19 @@ AI เขียน/รวม `spice_engine.py`, route, template, test และ 
 3. **ถ้า amplitude เปลี่ยนแต่กราฟไม่เปลี่ยน ตรวจอะไรก่อน?** → `VPEAK` ที่ส่ง, `SIN(0 ...)` ใน netlist, `parse_transient()`, จุด `polyline` จาก `build_plots()`
 4. **Impeccable เปลี่ยนอะไรได้ / ห้ามเปลี่ยนอะไร?** → ได้แค่ layout/presentation; ห้ามแตะสมการ หน่วย ค่า solver หรือสถานะ success (และในงานนี้ **ไม่ได้ใช้**)
 5. **รู้ได้ยังไงว่า Bode plot เป็นของจริงไม่ใช่ mock?** → แถว `VDB()/VP()` จาก `.PRINT AC`, `_section_rows()` แปลงเป็น array 801 จุด, netlist/log ที่โชว์ได้, เวอร์ชัน `ngspice-47`
+
+---
+
+## 27. DC Bias เดิมทั้ง 3 แบบถูกรวมไว้ใน Lab 04
+
+ตามข้อกำหนด *“Analytical เดิม (Fixed, Emitter, Voltage Divider) ต้องยังใช้งานได้ปกติ ไม่พัง/หายไปจากฟีเจอร์ใหม่”* — ตรวจแล้วเป็นไปตามนี้:
+
+| สิ่งที่ตรวจ | หลักฐาน |
+|---|---|
+| โหมดและสมการยังอยู่ครบ | `dc_bias.py` → `MODES = ("divider", "fixed", "emitter")`, `MODE_FIELDS` แยกตามโหมด, `calculate()`/`calculate_divider()`/`calculate_fixed()`/`calculate_emitter()` ไม่ถูกแก้ |
+| HTTP เดิมยังใช้ได้ | `app.py` → `/` และ `/calculate` เรียก `dc_bias` เหมือนเดิม; POST จริงได้ `divider IC 1.230 mA / VCE 8.052 V`, `fixed 1.130 mA / 9.514 V`, `emitter 1.026 mA / 8.705 V` (HTTP 200 ทั้ง 3) |
+| เข้าถึงได้จากหน้า Lab 04 | `templates/simulator.html` มี panel **`Analytical DC Bias (Lab 3) · ใช้ได้ทั้ง 3 โหมด`** พร้อมลิงก์ `/?mode=divider`, `/?mode=fixed`, `/?mode=emitter` — ไม่ใช่แค่ลิงก์กลับแบบทั่วไป |
+| เปรียบเทียบกับ SPICE ได้ | ตาราง DC ของ Lab 04 แยก `ngspice .op` ออกจาก `Analytical reference (Lab 3)` (ผ่าน `dc_bias.calculate_divider`) และบอกว่าคนละโมเดล |
+| ทดสอบ/หลักฐาน | `test_simulator_exposes_all_three_lab03_analytical_modes` + 49 Lab 03 tests เดิมยังผ่าน; screenshot `docs/screenshots/lab04-lab03-modes.png`; browser คลิกทั้ง 3 ลิงก์แล้วฟอร์มแสดง field ตรงโหมด |
+
+ยังไม่เพิ่ม Emitter bypass / circuit editor หรือเปลี่ยนสมการ Lab 03 — Lab 04 เป็นชั้น simulation/SPICE ที่อ่านค่าเดิมเท่านั้น

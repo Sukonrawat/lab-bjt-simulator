@@ -402,6 +402,9 @@ tbody td { font-variant-numeric: tabular-nums; font-weight: 700; }
 .sim-run:hover { background: #d7ece5; }
 .model-line { margin: .7rem 0 0; color: #547084; font-size: .68rem; word-break: break-word; }
 .model-line code { color: #13645c; }
+.lab03-inline { margin-top: .75rem; padding-top: .6rem; border-top: 1px solid #ccdce5; }
+.lab03-inline h3 { margin: 0 0 .25rem; font-size: .8rem; }
+.lab03-inline .soft { margin: 0 0 .4rem; font-size: .7rem; color: #547084; }
 
 .plot-card .status-row h2 { margin-bottom: .6rem; }
 .plot-card .badge { margin-bottom: 0; font-size: .72rem; }

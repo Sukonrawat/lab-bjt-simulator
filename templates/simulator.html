@@ -98,6 +98,16 @@
         </form>
 
         <p class="model-line">Model: <code>{{ model }}</code> · <code>{{ model_card }}</code></p>
+
+        <div class="lab03-inline" id="lab03-analytical">
+          <h3>Analytical DC Bias (Lab 3) · ใช้ได้ทั้ง 3 โหมด</h3>
+          <p class="soft">สมการทฤษฎีเดิมจาก <code>dc_bias.py</code> ยังอยู่ครบ — ไม่ถูกแทนที่ด้วย SPICE</p>
+          <nav class="sim-nav" aria-label="Lab 3 analytical modes">
+            <a href="/?mode=divider">Voltage Divider</a>
+            <a href="/?mode=fixed">Fixed</a>
+            <a href="/?mode=emitter">Emitter</a>
+          </nav>
+        </div>
       </section>
 
       <!-- ---------------- Simulation & Plots ---------------- -->

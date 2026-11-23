@@ -5,11 +5,11 @@ OK
 
 $ NGSPICE_BIN=$HOME/.local/ngspice-47/bin/ngspice python -m unittest discover -s tests
 ... (49 Lab 03 + 41 Lab 04, ไม่มี skip)
-Ran 90 tests in 0.109s
+Ran 91 tests in 0.134s
 OK
 
 $ python -m unittest discover -s tests             # ไม่ตั้ง NGSPICE_BIN
-Ran 90 tests in 0.026s
+Ran 91 tests in 0.034s
 OK (skipped=1)   # real-engine test ถูกข้ามตามความเหมาะสม
 
 # ตรวจ ngspice จริงด้วย adapter
@@ -55,8 +55,16 @@ screenshot OpenCode Browser -> docs/screenshots/lab04-dc-desktop.png         PAS
 before-state screenshot -> NOT SUBMITTED (ไม่มีของจริงเก็บไว้)                 ระบุไว้
 B1–B8 ตาราง Input/Expected-Reference/Evidence เพิ่มแล้ว                       PASS
 .gitignore + commit SHA ใน README + ลิงก์เก่า historical                     PASS
-unittest (NGSPICE_BIN) -> 90 tests OK, ไม่มี ResourceWarning                   PASS
-unittest (ไม่ตั้ง NGSPICE_BIN) -> 90 tests OK (skipped=1)                      PASS
+unittest (NGSPICE_BIN) -> 91 tests OK, ไม่มี ResourceWarning                   PASS
+unittest (ไม่ตั้ง NGSPICE_BIN) -> 91 tests OK (skipped=1)                      PASS
+
+# Lab 3 analytical รวมใน Lab 4
+POST /calculate divider -> HTTP 200, IC 1.230 mA, VCE 8.052 V                  PASS
+POST /calculate fixed   -> HTTP 200, IC 1.130 mA, VCE 9.514 V                  PASS
+POST /calculate emitter -> HTTP 200, IC 1.026 mA, VCE 8.705 V                  PASS
+GET /simulator -> panel "Analytical DC Bias (Lab 3)" + 3 links                 PASS
+browser -> คลิก divider/fixed/emitter ได้ field ตรงโหมด                        PASS
+screenshot -> docs/screenshots/lab04-lab03-modes.png                           PASS
 
 # หมายเหตุ public link
 ลิงก์เก่า https://constraints-humanity-misc-salary.trycloudflare.com ใช้ไม่ได้แล้ว

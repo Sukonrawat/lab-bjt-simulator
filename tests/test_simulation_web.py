@@ -86,6 +86,12 @@ class SimulatorPageTest(unittest.TestCase):
         body = self.client.get("/simulator?analysis=foo").get_data(as_text=True)
         self.assertIn('value="dc" checked', body)
 
+    def test_simulator_exposes_all_three_lab03_analytical_modes(self):
+        body = self.client.get("/simulator").get_data(as_text=True)
+        self.assertIn("Analytical DC Bias (Lab 3)", body)
+        for mode in ("divider", "fixed", "emitter"):
+            self.assertIn(f'href="/?mode={mode}"', body)
+
     def test_index_links_to_simulator(self):
         self.assertIn("/simulator", self.client.get("/").get_data(as_text=True))
 

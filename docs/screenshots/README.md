@@ -9,6 +9,8 @@
   caption `Input / Output waveforms · Time (s)`
 - `lab04-transient-desktop.png` — แท็บ Transient หลังกด Run Simulation:
   `Input frequency 1000 Hz`, 3 กราฟ, netlist/log ของ AC/Transient
+- `lab04-lab03-modes.png` — หน้า `/simulator` แสดง panel **`Analytical DC Bias (Lab 3) · ใช้ได้ทั้ง 3 โหมด`**
+  พร้อมลิงก์ `/?mode=divider`, `/?mode=fixed`, `/?mode=emitter`
 
 สภาพแวดล้อมนี้ไม่มี Playwright MCP/node/npx และไม่ได้ใช้ Impeccable skill จริง
 จึงใช้ OpenCode Browser แทน และบันทึกข้อจำกัดไว้ใน `docs/validation.md` ข้อ 19
